@@ -4,7 +4,7 @@ export const locations: Record<LocationId, Location> = {
   town: {
     id: "town",
     name: "Town",
-    symbol: "⌂",
+    symbol: "🏠",
     description: "A small settlement at the heart of the wilds.",
     color: 0xc8945d,
     exits: {
@@ -17,7 +17,7 @@ export const locations: Record<LocationId, Location> = {
   forest: {
     id: "forest",
     name: "Forest",
-    symbol: "♠",
+    symbol: "🌲",
     description: "Tall trees gather beyond the northern road.",
     color: 0x4f7a4b,
     exits: { south: "town" },
@@ -25,7 +25,7 @@ export const locations: Record<LocationId, Location> = {
   mine: {
     id: "mine",
     name: "Mine",
-    symbol: "◆",
+    symbol: "⛏",
     description: "A dark entrance cuts into the western hills.",
     color: 0x6c7180,
     exits: { east: "town" },
@@ -33,7 +33,7 @@ export const locations: Record<LocationId, Location> = {
   plains: {
     id: "plains",
     name: "Plains",
-    symbol: "≋",
+    symbol: "🌾",
     description: "Open grasslands stretch toward the eastern sky.",
     color: 0xb59b4c,
     exits: { west: "town" },
@@ -41,7 +41,7 @@ export const locations: Record<LocationId, Location> = {
   lake: {
     id: "lake",
     name: "Lake",
-    symbol: "≈",
+    symbol: "🌊",
     description: "Still blue water rests south of town.",
     color: 0x4b83a6,
     exits: { north: "town" },

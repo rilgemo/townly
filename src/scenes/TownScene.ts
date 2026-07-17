@@ -22,7 +22,7 @@ export class TownScene extends Phaser.Scene {
   create(): void {
     this.cameras.main.setBackgroundColor(colors.background);
 
-    this.add.text(70, 35, "Townly", {
+    this.add.text(70, 35, "🏠  Townly", {
       color: colors.primary,
       fontFamily: fonts.title,
       fontSize: "34px",
@@ -60,12 +60,12 @@ export class TownScene extends Phaser.Scene {
 
     resourceIds.forEach((resourceId, index) => {
       const resource = resources[resourceId];
-      this.add.text(70 + index * 160, 178, resource.name.padEnd(8), {
+      this.add.text(70 + index * 160, 178, `${resource.symbol}  ${resource.name}`, {
         color: colors.secondary,
         fontFamily: fonts.body,
         fontSize: "14px",
       });
-      this.add.text(150 + index * 160, 178, String(getResourceAmount(resourceId)), {
+      this.add.text(174 + index * 160, 178, String(getResourceAmount(resourceId)), {
         color: colors.primary,
         fontFamily: fonts.body,
         fontSize: "14px",
@@ -94,13 +94,13 @@ export class TownScene extends Phaser.Scene {
 
   private createLocationEntry(locationId: LocationId, y: number): void {
     const location = locations[locationId];
-    const title = this.add.text(70, y, `> ${location.name}`, {
+    const title = this.add.text(70, y, `> ${location.symbol}  ${location.name}`, {
       color: colors.action,
       fontFamily: fonts.body,
       fontSize: "16px",
     }).setInteractive({ useHandCursor: true });
 
-    this.add.text(210, y + 2, location.description, {
+    this.add.text(238, y + 2, location.description, {
       color: colors.secondary,
       fontFamily: fonts.body,
       fontSize: "13px",
@@ -113,7 +113,7 @@ export class TownScene extends Phaser.Scene {
 
   private createTownHallSection(): void {
     addDivider(this, 215, 610, 280);
-    this.add.text(610, 240, "TOWN HALL", {
+    this.add.text(610, 240, "🏠  TOWN HALL", {
       color: colors.accent,
       fontFamily: fonts.body,
       fontSize: "13px",

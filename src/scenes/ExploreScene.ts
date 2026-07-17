@@ -29,7 +29,7 @@ export class ExploreScene extends Phaser.Scene {
     const location = locations[this.locationId];
     this.cameras.main.setBackgroundColor(colors.background);
 
-    this.add.text(70, 35, location.name, {
+    this.add.text(70, 35, `${location.symbol}  ${location.name}`, {
       color: colors.primary,
       fontFamily: fonts.title,
       fontSize: "34px",
