@@ -24,6 +24,7 @@ This document records gameplay rules that are implemented or approved for implem
 - Deep Forest is added to the Town location list when discovered.
 - A new player arrives outside the village, meets the Village Guard, and is admitted through the gate.
 - The Village Chief provides temporary shelter and introduces basic gathering work.
+- The arrival sequence advances through places and contextual NPC actions rather than a linear dialogue chain.
 
 ## Design Principle
 

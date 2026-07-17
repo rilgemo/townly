@@ -8,7 +8,13 @@ import {
   type Exploration,
 } from "../systems/ExplorationSystem";
 import type { LocationId, ResourceId, ResourceReward } from "../types/game";
-import { addDivider, colors, fonts } from "../ui/theme";
+import {
+  addSectionTitle,
+  columns,
+  createTextAction,
+  renderLayout,
+} from "../ui/layout";
+import { colors, fonts } from "../ui/theme";
 
 interface ExploreSceneData {
   locationId: LocationId;
@@ -16,6 +22,8 @@ interface ExploreSceneData {
 
 export class ExploreScene extends Phaser.Scene {
   private locationId: LocationId = "forest";
+  private message = "Choose an action.";
+  private explorationActive = false;
 
   constructor() {
     super("explore");
@@ -23,112 +31,87 @@ export class ExploreScene extends Phaser.Scene {
 
   init(data: ExploreSceneData): void {
     this.locationId = data.locationId;
+    this.message = "Choose an action.";
+    this.explorationActive = false;
   }
 
   create(): void {
-    const location = locations[this.locationId];
-    this.cameras.main.setBackgroundColor(colors.background);
+    this.renderPlace();
+  }
 
-    this.add.text(70, 35, `${location.symbol}  ${location.name}`, {
+  private renderPlace(): void {
+    this.children.removeAll();
+    const location = locations[this.locationId];
+    renderLayout(this, "Surrounding Wilds", location.name);
+
+    addSectionTitle(this, columns.center, 32, "Current Place");
+    this.add.text(columns.center, 60, `${location.symbol} ${location.name}`, {
       color: colors.primary,
       fontFamily: fonts.title,
-      fontSize: "34px",
+      fontSize: "25px",
     });
-    this.add.text(890, 48, "LOCATION", {
+    this.add.text(columns.center, 102, location.description, {
       color: colors.secondary,
       fontFamily: fonts.body,
       fontSize: "13px",
-    }).setOrigin(1, 0);
-    addDivider(this, 82);
-
-    this.add.text(70, 112, location.description, {
-      color: colors.secondary,
-      fontFamily: fonts.body,
-      fontSize: "15px",
     });
 
+    addSectionTitle(this, columns.center, 166, "NPCs");
+    this.add.text(columns.center, 192, "No one is nearby.", {
+      color: colors.muted,
+      fontFamily: fonts.body,
+      fontSize: "13px",
+    });
+
+    addSectionTitle(this, columns.center, 236, "Available Actions");
+    this.renderActions();
+
+    addSectionTitle(this, columns.center, 390, "Recent");
+    this.add.text(columns.center, 416, this.message, {
+      color: this.explorationActive ? colors.secondary : colors.success,
+      fontFamily: fonts.body,
+      fontSize: "12px",
+      wordWrap: { width: 390 },
+      lineSpacing: 5,
+    });
+  }
+
+  private renderActions(): void {
     const exploration = getExploration(this.locationId);
+
     if (exploration) {
-      this.createExplorationSection(exploration);
+      const reward = this.formatReward(exploration.reward);
+      createTextAction(
+        this,
+        columns.center,
+        266,
+        this.explorationActive
+          ? "Exploration in progress"
+          : `Explore (${exploration.durationSeconds}s → ${reward})`,
+        () => this.beginExploration(exploration),
+        !this.explorationActive,
+      );
     } else {
-      this.createEmptySection();
+      createTextAction(
+        this,
+        columns.center,
+        266,
+        "Nothing has been discovered here yet",
+        () => undefined,
+        false,
+      );
     }
 
-    addDivider(this, 428);
-    const returnAction = this.add.text(70, 462, "< Return to Town", {
-      color: colors.action,
-      fontFamily: fonts.body,
-      fontSize: "15px",
-    }).setInteractive({ useHandCursor: true });
-    returnAction.on("pointerover", () => returnAction.setColor(colors.primary));
-    returnAction.on("pointerout", () => returnAction.setColor(colors.action));
-    returnAction.on("pointerdown", () => this.scene.start("town"));
-  }
-
-  private createExplorationSection(exploration: Exploration): void {
-    addDivider(this, 168);
-    this.add.text(70, 194, "EXPLORATION", {
-      color: colors.accent,
-      fontFamily: fonts.body,
-      fontSize: "13px",
-      fontStyle: "bold",
-    });
-
-    const rewardPreview = this.formatReward(exploration.reward);
-    this.add.text(70, 230, `Duration    ${exploration.durationSeconds} seconds`, {
-      color: colors.secondary,
-      fontFamily: fonts.body,
-      fontSize: "14px",
-    });
-    this.add.text(70, 258, `Find        ${rewardPreview}`, {
-      color: colors.secondary,
-      fontFamily: fonts.body,
-      fontSize: "14px",
-    });
-
-    const status = this.add.text(70, 342, "Ready.", {
-      color: colors.muted,
-      fontFamily: fonts.body,
-      fontSize: "13px",
-    });
-    const action = this.add.text(70, 302, "[ Explore ]", {
-      color: colors.action,
-      fontFamily: fonts.body,
-      fontSize: "16px",
-    }).setInteractive({ useHandCursor: true });
-
-    action.on("pointerover", () => action.setColor(colors.primary));
-    action.on("pointerout", () => action.setColor(colors.action));
-    action.once("pointerdown", () => {
-      action.disableInteractive().setColor(colors.disabled);
-      this.beginExploration(exploration, action, status);
+    createTextAction(this, columns.center, 300, "Return to Town", () => {
+      this.scene.start("town");
     });
   }
 
-  private createEmptySection(): void {
-    addDivider(this, 168);
-    this.add.text(70, 194, "EXPLORATION", {
-      color: colors.accent,
-      fontFamily: fonts.body,
-      fontSize: "13px",
-      fontStyle: "bold",
-    });
-    this.add.text(70, 238, "Nothing has been discovered here yet.", {
-      color: colors.muted,
-      fontFamily: fonts.body,
-      fontSize: "14px",
-      fontStyle: "italic",
-    });
-  }
-
-  private beginExploration(
-    exploration: Exploration,
-    action: Phaser.GameObjects.Text,
-    status: Phaser.GameObjects.Text,
-  ): void {
+  private beginExploration(exploration: Exploration): void {
+    this.explorationActive = true;
     let secondsRemaining = exploration.durationSeconds;
-    action.setText("[ Exploring ]");
-    status.setColor(colors.secondary).setText(`Progress    ${secondsRemaining}s remaining`);
+    this.message = `Exploring... ${secondsRemaining}s remaining`;
+    this.renderPlace();
 
     this.time.addEvent({
       delay: 1000,
@@ -136,15 +119,18 @@ export class ExploreScene extends Phaser.Scene {
       callback: () => {
         secondsRemaining -= 1;
         if (secondsRemaining > 0) {
-          status.setText(`Progress    ${secondsRemaining}s remaining`);
+          this.message = `Exploring... ${secondsRemaining}s remaining`;
+          this.renderPlace();
           return;
         }
 
         const result = completeExploration(this.locationId, exploration);
-        action.setText("[ Complete ]").setColor(colors.success);
-        status
-          .setColor(colors.success)
-          .setText(this.formatExplorationResult(result.reward, result.discoveredLocation));
+        this.explorationActive = false;
+        this.message = this.formatExplorationResult(
+          result.reward,
+          result.discoveredLocation,
+        );
+        this.renderPlace();
       },
     });
   }
@@ -153,22 +139,22 @@ export class ExploreScene extends Phaser.Scene {
     reward: ResourceReward,
     discoveredLocation?: LocationId,
   ): string {
-    const lines = [`Obtained    ${this.formatReward(reward)}`];
-
+    const lines = [`Obtained ${this.formatReward(reward)}.`];
     if (discoveredLocation) {
       lines.push(
-        "",
         "You discovered a hidden path.",
         `New location unlocked: ${locations[discoveredLocation].name}`,
       );
     }
-
     return lines.join("\n");
   }
 
   private formatReward(reward: ResourceReward): string {
     return Object.entries(reward)
-      .map(([resourceId, amount]) => `${amount} ${resources[resourceId as ResourceId].name}`)
-      .join("  ·  ");
+      .map(
+        ([resourceId, amount]) =>
+          `${amount} ${resources[resourceId as ResourceId].name}`,
+      )
+      .join(", ");
   }
 }

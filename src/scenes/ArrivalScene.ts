@@ -1,54 +1,50 @@
 import Phaser from "phaser";
 
 import { gameState } from "../state/GameState";
-import { addDivider, colors, fonts } from "../ui/theme";
+import {
+  addSectionTitle,
+  columns,
+  createTextAction,
+  renderLayout,
+} from "../ui/layout";
+import { colors, fonts } from "../ui/theme";
 
-interface ArrivalStep {
-  heading: string;
-  speaker?: string;
-  text: string;
-  action: string;
+interface PlaceContent {
+  area: string;
+  name: string;
+  description: string;
+  npcs: string[];
 }
 
-const arrivalSteps: ArrivalStep[] = [
-  {
-    heading: "THE ROAD",
-    text: "The road ends at a poor village. Smoke rises from a few worn roofs.\nA lone guard watches the gate.",
-    action: "[ Approach the gate ]",
+const places: Record<typeof gameState.introduction.currentPlace, PlaceContent> = {
+  outskirts: {
+    area: "Village Outskirts",
+    name: "The Old Road",
+    description: "The road ends at a poor village. Smoke rises from worn roofs.\nA lone guard watches the wooden gate.",
+    npcs: [],
   },
-  {
-    heading: "AT THE GATE",
-    speaker: "Village Guard",
-    text: "Hold there, traveler. We do not see many strangers anymore.\nYou look like you have been walking for some time.",
-    action: "[ Introduce yourself ]",
+  gate: {
+    area: "Village Outskirts",
+    name: "Village Gate",
+    description: "A weathered gate marks the village boundary.\nThe guard studies every traveler who approaches.",
+    npcs: ["🛡 Village Guard"],
   },
-  {
-    heading: "AT THE GATE",
-    speaker: "Village Guard",
-    text: "There is not much here, but the village turns away no one in need.\nSpeak with the Chief. He will decide what can be done for you.",
-    action: "[ Enter the village ]",
+  townSquare: {
+    area: "Townly",
+    name: "Town Square",
+    description: "The village is quiet, but not abandoned.\nA few people continue their work among the old buildings.",
+    npcs: ["🛡 Village Guard"],
   },
-  {
-    heading: "THE VILLAGE",
-    text: "The guard opens the old wooden gate. Inside, the village is quiet,\nbut not abandoned. A few people continue their work.",
-    action: "[ Find the Village Chief ]",
+  townHall: {
+    area: "Townly",
+    name: "Town Hall",
+    description: "The old hall has seen better years. A small fire burns within.\nThe Village Chief waits beside a table of village records.",
+    npcs: ["👴 Village Chief"],
   },
-  {
-    heading: "TOWN HALL",
-    speaker: "Village Chief",
-    text: "Welcome. We have little wealth, but an empty shelter is still standing.\nYou may use it until you find your footing.",
-    action: "[ Accept the shelter ]",
-  },
-  {
-    heading: "TOWN HALL",
-    speaker: "Village Chief",
-    text: "If you mean to stay, begin with simple work. Wood, stone, and herbs\ncan be gathered through the activities around our village.",
-    action: "[ Begin life in Townly ]",
-  },
-];
+};
 
 export class ArrivalScene extends Phaser.Scene {
-  private stepIndex = 0;
+  private message = "You have arrived at the edge of an unfamiliar village.";
 
   constructor() {
     super("arrival");
@@ -60,89 +56,115 @@ export class ArrivalScene extends Phaser.Scene {
       return;
     }
 
-    this.cameras.main.setBackgroundColor(colors.background);
-    this.add.text(70, 35, "🏠  Townly", {
-      color: colors.primary,
-      fontFamily: fonts.title,
-      fontSize: "34px",
-    });
-    this.add.text(890, 48, "ARRIVAL", {
-      color: colors.secondary,
-      fontFamily: fonts.body,
-      fontSize: "13px",
-    }).setOrigin(1, 0);
-    addDivider(this, 82);
-
-    this.renderStep();
+    this.renderPlace();
   }
 
-  private renderStep(): void {
-    const step = arrivalSteps[this.stepIndex];
-
+  private renderPlace(): void {
     this.children.removeAll();
-    this.add.text(70, 35, "🏠  Townly", {
+    const place = places[gameState.introduction.currentPlace];
+    renderLayout(this, place.area, place.name);
+
+    addSectionTitle(this, columns.center, 32, "Current Place");
+    this.add.text(columns.center, 60, place.name, {
       color: colors.primary,
       fontFamily: fonts.title,
-      fontSize: "34px",
+      fontSize: "25px",
     });
-    this.add.text(890, 48, `ARRIVAL  ·  ${this.stepIndex + 1}/${arrivalSteps.length}`, {
+    this.add.text(columns.center, 102, place.description, {
       color: colors.secondary,
       fontFamily: fonts.body,
       fontSize: "13px",
-    }).setOrigin(1, 0);
-    addDivider(this, 82);
-
-    this.add.text(70, 126, step.heading, {
-      color: colors.accent,
-      fontFamily: fonts.body,
-      fontSize: "13px",
-      fontStyle: "bold",
+      lineSpacing: 7,
     });
 
-    if (step.speaker) {
-      this.add.text(70, 176, step.speaker, {
-        color: colors.action,
-        fontFamily: fonts.title,
-        fontSize: "22px",
-      });
-    }
+    addSectionTitle(this, columns.center, 176, "NPCs");
+    this.add.text(
+      columns.center,
+      202,
+      place.npcs.length > 0 ? place.npcs.join("\n") : "No one is nearby.",
+      {
+        color: place.npcs.length > 0 ? colors.primary : colors.muted,
+        fontFamily: fonts.body,
+        fontSize: "13px",
+        lineSpacing: 6,
+      },
+    );
 
-    this.add.text(70, step.speaker ? 224 : 176, step.text, {
-      color: colors.primary,
+    addSectionTitle(this, columns.center, 270, "Available Actions");
+    this.renderActions();
+
+    addSectionTitle(this, columns.center, 414, "Recent");
+    this.add.text(columns.center, 440, this.message, {
+      color: colors.secondary,
       fontFamily: fonts.body,
-      fontSize: "15px",
-      lineSpacing: 10,
+      fontSize: "12px",
+      wordWrap: { width: 390 },
+      lineSpacing: 5,
     });
-
-    addDivider(this, 360);
-    const action = this.add.text(70, 398, step.action, {
-      color: colors.action,
-      fontFamily: fonts.body,
-      fontSize: "15px",
-    }).setInteractive({ useHandCursor: true });
-
-    action.on("pointerover", () => action.setColor(colors.primary));
-    action.on("pointerout", () => action.setColor(colors.action));
-    action.once("pointerdown", () => this.advance());
   }
 
-  private advance(): void {
-    if (this.stepIndex === 1) {
-      gameState.introduction.guardMet = true;
-    } else if (this.stepIndex === 2) {
-      gameState.introduction.villageEntered = true;
-    } else if (this.stepIndex === 4) {
-      gameState.introduction.chiefMet = true;
-      gameState.introduction.shelterReceived = true;
-    }
+  private renderActions(): void {
+    const place = gameState.introduction.currentPlace;
 
-    if (this.stepIndex === arrivalSteps.length - 1) {
-      gameState.introduction.completed = true;
-      this.scene.start("town");
+    if (place === "outskirts") {
+      createTextAction(this, columns.center, 302, "Approach the village gate", () => {
+        gameState.introduction.currentPlace = "gate";
+        this.message = "You follow the road to the gate.";
+        this.renderPlace();
+      });
       return;
     }
 
-    this.stepIndex += 1;
-    this.renderStep();
+    if (place === "gate") {
+      if (!gameState.introduction.guardMet) {
+        createTextAction(this, columns.center, 302, "Speak with Village Guard", () => {
+          gameState.introduction.guardMet = true;
+          this.message =
+            'Village Guard: "We have little, but we turn away no one in need. Speak with the Chief."';
+          this.renderPlace();
+        });
+      } else {
+        createTextAction(this, columns.center, 302, "Enter the village", () => {
+          gameState.introduction.villageEntered = true;
+          gameState.introduction.currentPlace = "townSquare";
+          this.message = "The guard opens the old wooden gate.";
+          this.renderPlace();
+        });
+        createTextAction(this, columns.center, 332, "Speak with Village Guard", () => {
+          this.message = 'Village Guard: "The Chief is waiting in the Town Hall."';
+          this.renderPlace();
+        });
+      }
+      return;
+    }
+
+    if (place === "townSquare") {
+      createTextAction(this, columns.center, 302, "Visit the Town Hall", () => {
+        gameState.introduction.currentPlace = "townHall";
+        this.message = "You cross the square and enter the old hall.";
+        this.renderPlace();
+      });
+      return;
+    }
+
+    if (!gameState.introduction.chiefMet) {
+      createTextAction(this, columns.center, 302, "Speak with Village Chief", () => {
+        gameState.introduction.chiefMet = true;
+        gameState.introduction.shelterReceived = true;
+        this.message =
+          'Village Chief: "Use the empty shelter. Wood, stone, and herbs can be gathered nearby."';
+        this.renderPlace();
+      });
+      return;
+    }
+
+    createTextAction(this, columns.center, 302, "Begin life in Townly", () => {
+      gameState.introduction.completed = true;
+      this.scene.start("town");
+    });
+    createTextAction(this, columns.center, 332, "Speak with Village Chief", () => {
+      this.message = 'Village Chief: "Start with simple work. The village will grow in time."';
+      this.renderPlace();
+    });
   }
 }

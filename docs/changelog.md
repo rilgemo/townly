@@ -19,5 +19,8 @@ Notable project changes are recorded here.
 - Discovery feedback in the exploration log and unlocked Town location list.
 - First-time arrival flow through the Village Guard and Village Chief.
 - Temporary shelter and basic gathering introduction.
+- Three-column text RPG layout for town, place information, and area context.
+- Place-based arrival interactions replacing the linear introduction sequence.
+- Contextual action lists generated from the current place state.
 - Lightweight roadmap, ideas, mechanics, and changelog documents.
 - GitHub Actions build workflow.

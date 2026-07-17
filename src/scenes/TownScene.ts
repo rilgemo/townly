@@ -1,174 +1,110 @@
 import Phaser from "phaser";
 
 import { locations } from "../data/locations";
-import { resourceIds, resources } from "../data/resources";
 import { gameState } from "../state/GameState";
-import { getResourceAmount } from "../systems/ResourceSystem";
 import {
   canUpgradeTownHall,
   townHallUpgradeCost,
   upgradeTownHall,
 } from "../systems/TownUpgradeSystem";
-import type { LocationId } from "../types/game";
-import { addDivider, colors, fonts } from "../ui/theme";
+import {
+  addSectionTitle,
+  columns,
+  createTextAction,
+  renderLayout,
+} from "../ui/layout";
+import { colors, fonts } from "../ui/theme";
 
 export class TownScene extends Phaser.Scene {
+  private message = "The town waits for your next decision.";
+
   constructor() {
     super("town");
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor(colors.background);
+    this.renderTown();
+  }
 
-    this.add.text(70, 35, "🏠  Townly", {
+  private renderTown(): void {
+    this.children.removeAll();
+    renderLayout(this, "Townly", "Town Square");
+
+    addSectionTitle(this, columns.center, 32, "Current Place");
+    this.add.text(columns.center, 60, "Town Square", {
       color: colors.primary,
       fontFamily: fonts.title,
-      fontSize: "34px",
+      fontSize: "25px",
     });
-    this.add.text(890, 48, `TOWN  ·  LEVEL ${gameState.town.level}`, {
-      color: colors.secondary,
-      fontFamily: fonts.body,
-      fontSize: "13px",
-    }).setOrigin(1, 0);
-    addDivider(this, 82);
-
-    this.add.text(70, 108, "A small settlement slowly comes alive.", {
-      color: colors.secondary,
-      fontFamily: fonts.body,
-      fontSize: "15px",
-    });
-
-    this.createResourceSection();
-    this.createLocationSection();
-    this.createTownHallSection();
-  }
-
-  private createResourceSection(): void {
-    this.add.text(70, 150, "RESOURCES", {
-      color: colors.accent,
-      fontFamily: fonts.body,
-      fontSize: "13px",
-      fontStyle: "bold",
-    });
-    this.add.text(220, 150, `${gameState.player.name}  ·  Level ${gameState.player.level}`, {
-      color: colors.muted,
-      fontFamily: fonts.body,
-      fontSize: "12px",
-    });
-
-    resourceIds.forEach((resourceId, index) => {
-      const resource = resources[resourceId];
-      this.add.text(70 + index * 160, 178, `${resource.symbol}  ${resource.name}`, {
-        color: colors.secondary,
-        fontFamily: fonts.body,
-        fontSize: "14px",
-      });
-      this.add.text(174 + index * 160, 178, String(getResourceAmount(resourceId)), {
-        color: colors.primary,
-        fontFamily: fonts.body,
-        fontSize: "14px",
-        fontStyle: "bold",
-      });
-    });
-  }
-
-  private createLocationSection(): void {
-    addDivider(this, 215, 70, 500);
-    this.add.text(70, 240, "EXPLORE", {
-      color: colors.accent,
-      fontFamily: fonts.body,
-      fontSize: "13px",
-      fontStyle: "bold",
-    });
-
-    gameState.discoveredLocations
-      .filter((locationId) => locationId !== "town")
-      .forEach((locationId, index) => {
-        this.createLocationEntry(locationId, 276 + index * 48);
-      });
-  }
-
-  private createLocationEntry(locationId: LocationId, y: number): void {
-    const location = locations[locationId];
-    const title = this.add.text(70, y, `> ${location.symbol}  ${location.name}`, {
-      color: colors.action,
-      fontFamily: fonts.body,
-      fontSize: "16px",
-    }).setInteractive({ useHandCursor: true });
-
-    this.add.text(238, y + 2, location.description, {
-      color: colors.secondary,
-      fontFamily: fonts.body,
-      fontSize: "13px",
-    });
-
-    title.on("pointerover", () => title.setColor(colors.primary));
-    title.on("pointerout", () => title.setColor(colors.action));
-    title.on("pointerdown", () => this.scene.start("explore", { locationId }));
-  }
-
-  private createTownHallSection(): void {
-    addDivider(this, 215, 610, 280);
-    this.add.text(610, 240, "🏠  TOWN HALL", {
-      color: colors.accent,
-      fontFamily: fonts.body,
-      fontSize: "13px",
-      fontStyle: "bold",
-    });
-    this.add.text(610, 276, `Level ${gameState.town.level}`, {
-      color: colors.primary,
-      fontFamily: fonts.title,
-      fontSize: "23px",
-    });
-
-    if (gameState.town.level >= 2) {
-      this.add.text(610, 318, "The old hall is restored.\nThe town feels a little more alive.", {
+    this.add.text(
+      columns.center,
+      102,
+      "A small settlement slowly comes alive. Roads lead toward\nthe surrounding forest, mine, plains, and lake.",
+      {
         color: colors.secondary,
         fontFamily: fonts.body,
         fontSize: "13px",
-        lineSpacing: 8,
-      });
-      this.add.text(610, 390, "REPAIR COMPLETED", {
-        color: colors.success,
-        fontFamily: fonts.body,
-        fontSize: "12px",
-        fontStyle: "bold",
-      });
-      return;
-    }
+        lineSpacing: 7,
+      },
+    );
 
-    this.add.text(610, 318, "The old hall needs repair.", {
-      color: colors.secondary,
-      fontFamily: fonts.body,
-      fontSize: "13px",
-    });
-
-    const woodCost = townHallUpgradeCost.wood ?? 0;
-    const stoneCost = townHallUpgradeCost.stone ?? 0;
-    this.add.text(610, 351, `${woodCost} Wood  ·  ${stoneCost} Stone`, {
+    addSectionTitle(this, columns.center, 166, "NPCs");
+    this.add.text(columns.center, 192, "🛡 Village Guard    👴 Village Chief", {
       color: colors.primary,
       fontFamily: fonts.body,
       fontSize: "13px",
     });
 
-    const affordable = canUpgradeTownHall();
-    const action = this.add.text(610, 394, affordable ? "[ Repair Town Hall ]" : "[ Resources required ]", {
-      color: affordable ? colors.action : colors.disabled,
-      fontFamily: fonts.body,
-      fontSize: "14px",
-    });
+    addSectionTitle(this, columns.center, 236, "Available Actions");
+    this.renderActions();
 
-    if (!affordable) {
-      return;
+    addSectionTitle(this, columns.center, 454, "Recent");
+    this.add.text(columns.center, 478, this.message, {
+      color: colors.secondary,
+      fontFamily: fonts.body,
+      fontSize: "12px",
+      wordWrap: { width: 390 },
+    });
+  }
+
+  private renderActions(): void {
+    let actionY = 266;
+
+    for (const locationId of gameState.discoveredLocations) {
+      if (locationId === "town") {
+        continue;
+      }
+
+      const location = locations[locationId];
+      createTextAction(
+        this,
+        columns.center,
+        actionY,
+        `Travel to ${location.symbol} ${location.name}`,
+        () => this.scene.start("explore", { locationId }),
+      );
+      actionY += 28;
     }
 
-    action.setInteractive({ useHandCursor: true });
-    action.on("pointerover", () => action.setColor(colors.primary));
-    action.on("pointerout", () => action.setColor(colors.action));
-    action.once("pointerdown", () => {
-      if (upgradeTownHall()) {
-        this.scene.restart();
-      }
-    });
+    if (gameState.town.level === 1) {
+      const woodCost = townHallUpgradeCost.wood ?? 0;
+      const stoneCost = townHallUpgradeCost.stone ?? 0;
+      const affordable = canUpgradeTownHall();
+      createTextAction(
+        this,
+        columns.center,
+        actionY,
+        affordable
+          ? `Repair Town Hall (${woodCost} Wood, ${stoneCost} Stone)`
+          : `Town Hall repair requires ${woodCost} Wood, ${stoneCost} Stone`,
+        () => {
+          if (upgradeTownHall()) {
+            this.message = "The Town Hall has been restored. Town Level increased.";
+            this.renderTown();
+          }
+        },
+        affordable,
+      );
+    }
   }
 }
