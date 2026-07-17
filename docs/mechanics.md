@@ -24,3 +24,5 @@ This document records gameplay rules that are implemented or approved for implem
 ## Design Principle
 
 Townly progression is place-first: Town → Exploration → Growth.
+
+The interface presents Townly as a readable town record and adventure log rather than a graphical RPG map.

@@ -13,5 +13,6 @@ Notable project changes are recorded here.
 - Ten-second Forest and Mine exploration actions with resource rewards.
 - In-memory player and Wood, Stone, and Herb state shown in Town.
 - Town Hall repair costing 10 Wood and 5 Stone, raising Town to level 2.
+- Minimalist text-driven interface replacing the prototype map cards.
 - Lightweight roadmap, ideas, mechanics, and changelog documents.
 - GitHub Actions build workflow.

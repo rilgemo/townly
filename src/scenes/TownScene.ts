@@ -10,19 +10,9 @@ import {
   upgradeTownHall,
 } from "../systems/TownUpgradeSystem";
 import type { Direction, LocationId } from "../types/game";
+import { addDivider, colors, fonts } from "../ui/theme";
 
-interface LocationButtonLayout {
-  direction: Direction;
-  x: number;
-  y: number;
-}
-
-const buttonLayouts: LocationButtonLayout[] = [
-  { direction: "north", x: 480, y: 105 },
-  { direction: "west", x: 235, y: 270 },
-  { direction: "east", x: 725, y: 270 },
-  { direction: "south", x: 480, y: 435 },
-];
+const directions: Direction[] = ["north", "west", "east", "south"];
 
 export class TownScene extends Phaser.Scene {
   constructor() {
@@ -30,190 +20,159 @@ export class TownScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.drawFrame();
+    this.cameras.main.setBackgroundColor(colors.background);
 
-    this.add
-      .text(480, 28, "TOWNLY", {
-        color: "#e8d8b7",
-        fontFamily: "Georgia, serif",
-        fontSize: "20px",
-        letterSpacing: 8,
-      })
-      .setOrigin(0.5, 0);
+    this.add.text(70, 35, "Townly", {
+      color: colors.primary,
+      fontFamily: fonts.title,
+      fontSize: "34px",
+    });
+    this.add.text(890, 48, `TOWN  ·  LEVEL ${gameState.town.level}`, {
+      color: colors.secondary,
+      fontFamily: fonts.body,
+      fontSize: "13px",
+    }).setOrigin(1, 0);
+    addDivider(this, 82);
 
-    const town = locations.town;
-    this.createLocationCard(480, 270, town.id, false);
-    this.createResourcePanel();
-    this.createTownUpgradePanel();
+    this.add.text(70, 108, "A small settlement slowly comes alive.", {
+      color: colors.secondary,
+      fontFamily: fonts.body,
+      fontSize: "15px",
+    });
 
-    for (const layout of buttonLayouts) {
-      const destination = town.exits[layout.direction];
-      if (destination) {
-        this.createLocationCard(layout.x, layout.y, destination, true);
-      }
-    }
-
-    this.add
-      .text(480, 505, "Choose a road to leave town", {
-        color: "#9eaa98",
-        fontFamily: "Arial, sans-serif",
-        fontSize: "14px",
-      })
-      .setOrigin(0.5);
+    this.createResourceSection();
+    this.createLocationSection();
+    this.createTownHallSection();
   }
 
-  private createResourcePanel(): void {
-    const panel = this.add.graphics();
-    panel.fillStyle(0x101711, 0.92);
-    panel.fillRoundedRect(54, 44, 190, 118, 10);
-    panel.lineStyle(1, 0x6e7f68, 0.75);
-    panel.strokeRoundedRect(54, 44, 190, 118, 10);
-
-    this.add.text(72, 60, `${gameState.player.name}  ·  Lv. ${gameState.player.level}`, {
-      color: "#e2cda6",
-      fontFamily: "Georgia, serif",
-      fontSize: "14px",
+  private createResourceSection(): void {
+    this.add.text(70, 150, "RESOURCES", {
+      color: colors.accent,
+      fontFamily: fonts.body,
+      fontSize: "13px",
       fontStyle: "bold",
+    });
+    this.add.text(220, 150, `${gameState.player.name}  ·  Level ${gameState.player.level}`, {
+      color: colors.muted,
+      fontFamily: fonts.body,
+      fontSize: "12px",
     });
 
     resourceIds.forEach((resourceId, index) => {
       const resource = resources[resourceId];
-      this.add.text(
-        72,
-        88 + index * 21,
-        `${resource.symbol}  ${resource.name}: ${getResourceAmount(resourceId)}`,
-        {
-          color: "#c5cfbc",
-          fontFamily: "Arial, sans-serif",
-          fontSize: "13px",
-        },
-      );
+      this.add.text(70 + index * 160, 178, resource.name.padEnd(8), {
+        color: colors.secondary,
+        fontFamily: fonts.body,
+        fontSize: "14px",
+      });
+      this.add.text(150 + index * 160, 178, String(getResourceAmount(resourceId)), {
+        color: colors.primary,
+        fontFamily: fonts.body,
+        fontSize: "14px",
+        fontStyle: "bold",
+      });
     });
   }
 
-  private createTownUpgradePanel(): void {
-    const panel = this.add.graphics();
-    panel.fillStyle(0x101711, 0.92);
-    panel.fillRoundedRect(706, 44, 200, 118, 10);
-    panel.lineStyle(1, 0x9b744f, 0.85);
-    panel.strokeRoundedRect(706, 44, 200, 118, 10);
-
-    this.add.text(724, 60, `Town Hall  ·  Lv. ${gameState.town.level}`, {
-      color: "#e2cda6",
-      fontFamily: "Georgia, serif",
-      fontSize: "14px",
+  private createLocationSection(): void {
+    addDivider(this, 215, 70, 500);
+    this.add.text(70, 240, "EXPLORE", {
+      color: colors.accent,
+      fontFamily: fonts.body,
+      fontSize: "13px",
       fontStyle: "bold",
     });
 
+    const town = locations.town;
+    directions.forEach((direction, index) => {
+      const destination = town.exits[direction];
+      if (destination) {
+        this.createLocationEntry(destination, 276 + index * 52);
+      }
+    });
+  }
+
+  private createLocationEntry(locationId: LocationId, y: number): void {
+    const location = locations[locationId];
+    const title = this.add.text(70, y, `> ${location.name}`, {
+      color: colors.action,
+      fontFamily: fonts.body,
+      fontSize: "16px",
+    }).setInteractive({ useHandCursor: true });
+
+    this.add.text(210, y + 2, location.description, {
+      color: colors.secondary,
+      fontFamily: fonts.body,
+      fontSize: "13px",
+    });
+
+    title.on("pointerover", () => title.setColor(colors.primary));
+    title.on("pointerout", () => title.setColor(colors.action));
+    title.on("pointerdown", () => this.scene.start("explore", { locationId }));
+  }
+
+  private createTownHallSection(): void {
+    addDivider(this, 215, 610, 280);
+    this.add.text(610, 240, "TOWN HALL", {
+      color: colors.accent,
+      fontFamily: fonts.body,
+      fontSize: "13px",
+      fontStyle: "bold",
+    });
+    this.add.text(610, 276, `Level ${gameState.town.level}`, {
+      color: colors.primary,
+      fontFamily: fonts.title,
+      fontSize: "23px",
+    });
+
     if (gameState.town.level >= 2) {
-      this.add.text(724, 100, "The old hall is restored.", {
-        color: "#b9dc9d",
-        fontFamily: "Arial, sans-serif",
+      this.add.text(610, 318, "The old hall is restored.\nThe town feels a little more alive.", {
+        color: colors.secondary,
+        fontFamily: fonts.body,
         fontSize: "13px",
+        lineSpacing: 8,
+      });
+      this.add.text(610, 390, "REPAIR COMPLETED", {
+        color: colors.success,
+        fontFamily: fonts.body,
+        fontSize: "12px",
+        fontStyle: "bold",
       });
       return;
     }
 
-    const woodCost = townHallUpgradeCost.wood ?? 0;
-    const stoneCost = townHallUpgradeCost.stone ?? 0;
-    const affordable = canUpgradeTownHall();
-
-    this.add.text(724, 85, `Repair: ${woodCost} Wood + ${stoneCost} Stone`, {
-      color: "#c5cfbc",
-      fontFamily: "Arial, sans-serif",
-      fontSize: "12px",
+    this.add.text(610, 318, "The old hall needs repair.", {
+      color: colors.secondary,
+      fontFamily: fonts.body,
+      fontSize: "13px",
     });
 
-    const button = this.add.graphics();
-    button.fillStyle(affordable ? 0x7d633f : 0x3c433b, 0.9);
-    button.fillRoundedRect(724, 112, 164, 34, 7);
+    const woodCost = townHallUpgradeCost.wood ?? 0;
+    const stoneCost = townHallUpgradeCost.stone ?? 0;
+    this.add.text(610, 351, `${woodCost} Wood  ·  ${stoneCost} Stone`, {
+      color: colors.primary,
+      fontFamily: fonts.body,
+      fontSize: "13px",
+    });
 
-    const buttonLabel = this.add
-      .text(806, 129, affordable ? "Repair Town Hall" : "Need resources", {
-        color: affordable ? "#fff0cf" : "#7f897c",
-        fontFamily: "Arial, sans-serif",
-        fontSize: "12px",
-        fontStyle: "bold",
-      })
-      .setOrigin(0.5);
+    const affordable = canUpgradeTownHall();
+    const action = this.add.text(610, 394, affordable ? "[ Repair Town Hall ]" : "[ Resources required ]", {
+      color: affordable ? colors.action : colors.disabled,
+      fontFamily: fonts.body,
+      fontSize: "14px",
+    });
 
     if (!affordable) {
       return;
     }
 
-    const hitArea = this.add
-      .zone(806, 129, 164, 34)
-      .setInteractive({ useHandCursor: true });
-    hitArea.on("pointerover", () => buttonLabel.setColor("#ffffff"));
-    hitArea.on("pointerout", () => buttonLabel.setColor("#fff0cf"));
-    hitArea.once("pointerdown", () => {
+    action.setInteractive({ useHandCursor: true });
+    action.on("pointerover", () => action.setColor(colors.primary));
+    action.on("pointerout", () => action.setColor(colors.action));
+    action.once("pointerdown", () => {
       if (upgradeTownHall()) {
         this.scene.restart();
       }
-    });
-  }
-
-  private drawFrame(): void {
-    const graphics = this.add.graphics();
-    graphics.lineStyle(2, 0x6e7f68, 0.8);
-    graphics.strokeRoundedRect(24, 20, 912, 500, 16);
-    graphics.lineStyle(2, 0x65745f, 0.45);
-    graphics.lineBetween(480, 180, 480, 214);
-    graphics.lineBetween(345, 270, 384, 270);
-    graphics.lineBetween(576, 270, 615, 270);
-    graphics.lineBetween(480, 326, 480, 360);
-  }
-
-  private createLocationCard(
-    x: number,
-    y: number,
-    locationId: LocationId,
-    interactive: boolean,
-  ): void {
-    const location = locations[locationId];
-    const width = interactive ? 220 : 192;
-    const height = interactive ? 112 : 96;
-    const card = this.add.graphics();
-
-    card.fillStyle(location.color, interactive ? 0.25 : 0.38);
-    card.fillRoundedRect(x - width / 2, y - height / 2, width, height, 12);
-    card.lineStyle(2, location.color, interactive ? 0.95 : 0.7);
-    card.strokeRoundedRect(x - width / 2, y - height / 2, width, height, 12);
-
-    this.add
-      .text(x, y - 15, `${location.symbol}  ${location.name}`, {
-        color: "#f4ead6",
-        fontFamily: "Georgia, serif",
-        fontSize: interactive ? "25px" : "28px",
-        fontStyle: "bold",
-      })
-      .setOrigin(0.5);
-
-    this.add
-      .text(
-        x,
-        y + 24,
-        interactive ? "Click to travel" : `Town Hall Lv. ${gameState.town.level}`,
-        {
-        color: interactive ? "#c5cfbc" : "#e2cda6",
-        fontFamily: "Arial, sans-serif",
-        fontSize: "13px",
-        },
-      )
-      .setOrigin(0.5);
-
-    if (!interactive) {
-      return;
-    }
-
-    const hitArea = this.add
-      .zone(x, y, width, height)
-      .setInteractive({ useHandCursor: true });
-
-    hitArea.on("pointerover", () => card.setAlpha(1.45));
-    hitArea.on("pointerout", () => card.setAlpha(1));
-    hitArea.on("pointerdown", () => {
-      this.scene.start("explore", { locationId });
     });
   }
 }

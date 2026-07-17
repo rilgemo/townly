@@ -8,6 +8,7 @@ import {
   type Exploration,
 } from "../systems/ExplorationSystem";
 import type { LocationId, ResourceId, ResourceReward } from "../types/game";
+import { addDivider, colors, fonts } from "../ui/theme";
 
 interface ExploreSceneData {
   locationId: LocationId;
@@ -26,142 +27,129 @@ export class ExploreScene extends Phaser.Scene {
 
   create(): void {
     const location = locations[this.locationId];
-    const graphics = this.add.graphics();
+    this.cameras.main.setBackgroundColor(colors.background);
 
-    graphics.fillStyle(location.color, 0.18);
-    graphics.fillCircle(480, 235, 145);
-    graphics.lineStyle(3, location.color, 0.9);
-    graphics.strokeCircle(480, 235, 145);
-    graphics.fillStyle(0x111712, 0.72);
-    graphics.fillRoundedRect(340, 458, 280, 52, 12);
-    graphics.lineStyle(2, 0xc8945d, 0.9);
-    graphics.strokeRoundedRect(340, 458, 280, 52, 12);
+    this.add.text(70, 35, location.name, {
+      color: colors.primary,
+      fontFamily: fonts.title,
+      fontSize: "34px",
+    });
+    this.add.text(890, 48, "LOCATION", {
+      color: colors.secondary,
+      fontFamily: fonts.body,
+      fontSize: "13px",
+    }).setOrigin(1, 0);
+    addDivider(this, 82);
 
-    this.add
-      .text(480, 185, location.symbol, {
-        color: "#f2e7cf",
-        fontFamily: "Georgia, serif",
-        fontSize: "72px",
-      })
-      .setOrigin(0.5);
-
-    this.add
-      .text(480, 275, location.name, {
-        color: "#f2e7cf",
-        fontFamily: "Georgia, serif",
-        fontSize: "40px",
-        fontStyle: "bold",
-      })
-      .setOrigin(0.5);
-
-    this.add
-      .text(480, 330, location.description, {
-        align: "center",
-        color: "#bdc8b8",
-        fontFamily: "Arial, sans-serif",
-        fontSize: "17px",
-        wordWrap: { width: 520 },
-      })
-      .setOrigin(0.5);
+    this.add.text(70, 112, location.description, {
+      color: colors.secondary,
+      fontFamily: fonts.body,
+      fontSize: "15px",
+    });
 
     const exploration = getExploration(this.locationId);
     if (exploration) {
-      this.createExploreAction(exploration);
+      this.createExplorationSection(exploration);
     } else {
-      this.add
-        .text(480, 382, "There is nothing to gather here yet.", {
-          color: "#899586",
-          fontFamily: "Arial, sans-serif",
-          fontSize: "15px",
-          fontStyle: "italic",
-        })
-        .setOrigin(0.5);
+      this.createEmptySection();
     }
 
-    const returnButton = this.add
-      .zone(480, 484, 280, 52)
-      .setInteractive({ useHandCursor: true });
-    const returnLabel = this.add
-      .text(480, 484, "←  Return to Town", {
-        color: "#f0ddba",
-        fontFamily: "Georgia, serif",
-        fontSize: "22px",
-        fontStyle: "bold",
-      })
-      .setOrigin(0.5);
-
-    returnButton.on("pointerover", () => returnLabel.setColor("#ffffff"));
-    returnButton.on("pointerout", () => returnLabel.setColor("#f0ddba"));
-    returnButton.on("pointerdown", () => this.scene.start("town"));
+    addDivider(this, 428);
+    const returnAction = this.add.text(70, 462, "< Return to Town", {
+      color: colors.action,
+      fontFamily: fonts.body,
+      fontSize: "15px",
+    }).setInteractive({ useHandCursor: true });
+    returnAction.on("pointerover", () => returnAction.setColor(colors.primary));
+    returnAction.on("pointerout", () => returnAction.setColor(colors.action));
+    returnAction.on("pointerdown", () => this.scene.start("town"));
   }
 
-  private createExploreAction(exploration: Exploration): void {
-    const actionBackground = this.add.graphics();
-    actionBackground.fillStyle(0x111712, 0.86);
-    actionBackground.fillRoundedRect(340, 372, 280, 64, 12);
-    actionBackground.lineStyle(2, locations[this.locationId].color, 0.9);
-    actionBackground.strokeRoundedRect(340, 372, 280, 64, 12);
+  private createExplorationSection(exploration: Exploration): void {
+    addDivider(this, 168);
+    this.add.text(70, 194, "EXPLORATION", {
+      color: colors.accent,
+      fontFamily: fonts.body,
+      fontSize: "13px",
+      fontStyle: "bold",
+    });
 
-    const actionLabel = this.add
-      .text(480, 404, `Explore  ·  ${exploration.durationSeconds}s`, {
-        color: "#f0ddba",
-        fontFamily: "Georgia, serif",
-        fontSize: "21px",
-        fontStyle: "bold",
-      })
-      .setOrigin(0.5);
-    const actionButton = this.add
-      .zone(480, 404, 280, 64)
-      .setInteractive({ useHandCursor: true });
+    const rewardPreview = this.formatReward(exploration.reward);
+    this.add.text(70, 230, `Duration    ${exploration.durationSeconds} seconds`, {
+      color: colors.secondary,
+      fontFamily: fonts.body,
+      fontSize: "14px",
+    });
+    this.add.text(70, 258, `Find        ${rewardPreview}`, {
+      color: colors.secondary,
+      fontFamily: fonts.body,
+      fontSize: "14px",
+    });
 
-    actionButton.on("pointerover", () => actionLabel.setColor("#ffffff"));
-    actionButton.on("pointerout", () => actionLabel.setColor("#f0ddba"));
-    actionButton.once("pointerdown", () => {
-      actionButton.disableInteractive();
-      this.beginExploration(exploration, actionLabel);
+    const status = this.add.text(70, 342, "Ready.", {
+      color: colors.muted,
+      fontFamily: fonts.body,
+      fontSize: "13px",
+    });
+    const action = this.add.text(70, 302, "[ Explore ]", {
+      color: colors.action,
+      fontFamily: fonts.body,
+      fontSize: "16px",
+    }).setInteractive({ useHandCursor: true });
+
+    action.on("pointerover", () => action.setColor(colors.primary));
+    action.on("pointerout", () => action.setColor(colors.action));
+    action.once("pointerdown", () => {
+      action.disableInteractive().setColor(colors.disabled);
+      this.beginExploration(exploration, action, status);
+    });
+  }
+
+  private createEmptySection(): void {
+    addDivider(this, 168);
+    this.add.text(70, 194, "EXPLORATION", {
+      color: colors.accent,
+      fontFamily: fonts.body,
+      fontSize: "13px",
+      fontStyle: "bold",
+    });
+    this.add.text(70, 238, "Nothing has been discovered here yet.", {
+      color: colors.muted,
+      fontFamily: fonts.body,
+      fontSize: "14px",
+      fontStyle: "italic",
     });
   }
 
   private beginExploration(
     exploration: Exploration,
-    actionLabel: Phaser.GameObjects.Text,
+    action: Phaser.GameObjects.Text,
+    status: Phaser.GameObjects.Text,
   ): void {
     let secondsRemaining = exploration.durationSeconds;
-    actionLabel.setText(`Exploring... ${secondsRemaining}s`);
+    action.setText("[ Exploring ]");
+    status.setColor(colors.secondary).setText(`Progress    ${secondsRemaining}s remaining`);
 
     this.time.addEvent({
       delay: 1000,
       repeat: exploration.durationSeconds - 1,
       callback: () => {
         secondsRemaining -= 1;
-
         if (secondsRemaining > 0) {
-          actionLabel.setText(`Exploring... ${secondsRemaining}s`);
+          status.setText(`Progress    ${secondsRemaining}s remaining`);
           return;
         }
 
         const reward = completeExploration(exploration);
-        actionLabel.setText("Exploration complete");
-        this.showReward(reward);
+        action.setText("[ Complete ]").setColor(colors.success);
+        status.setColor(colors.success).setText(`Obtained    ${this.formatReward(reward)}`);
       },
     });
   }
 
-  private showReward(reward: ResourceReward): void {
-    const rewardText = Object.entries(reward)
-      .map(([resourceId, amount]) => {
-        const resource = resources[resourceId as ResourceId];
-        return `+${amount} ${resource.name}`;
-      })
-      .join("   ");
-
-    this.add
-      .text(480, 446, rewardText, {
-        color: "#b9dc9d",
-        fontFamily: "Arial, sans-serif",
-        fontSize: "16px",
-        fontStyle: "bold",
-      })
-      .setOrigin(0.5);
+  private formatReward(reward: ResourceReward): string {
+    return Object.entries(reward)
+      .map(([resourceId, amount]) => `${amount} ${resources[resourceId as ResourceId].name}`)
+      .join("  ·  ");
   }
 }
