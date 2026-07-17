@@ -22,6 +22,8 @@ This document records gameplay rules that are implemented or approved for implem
 - The first Town Hall repair raises the Town from level 1 to level 2.
 - Completing Forest exploration three times reveals Deep Forest.
 - Deep Forest is added to the Town location list when discovered.
+- A new player arrives outside the village, meets the Village Guard, and is admitted through the gate.
+- The Village Chief provides temporary shelter and introduces basic gathering work.
 
 ## Design Principle
 

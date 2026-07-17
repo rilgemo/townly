@@ -7,6 +7,13 @@ export interface GameState {
   };
   discoveredLocations: LocationId[];
   explorationCounts: Partial<Record<LocationId, number>>;
+  introduction: {
+    guardMet: boolean;
+    villageEntered: boolean;
+    chiefMet: boolean;
+    shelterReceived: boolean;
+    completed: boolean;
+  };
   resources: ResourceInventory;
 }
 
@@ -20,6 +27,13 @@ export const gameState: GameState = {
   },
   discoveredLocations: ["town", "forest", "mine", "plains", "lake"],
   explorationCounts: {},
+  introduction: {
+    guardMet: false,
+    villageEntered: false,
+    chiefMet: false,
+    shelterReceived: false,
+    completed: false,
+  },
   resources: {
     wood: 0,
     stone: 0,

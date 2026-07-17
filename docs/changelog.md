@@ -17,5 +17,7 @@ Notable project changes are recorded here.
 - Lightweight emoji anchors for resources, locations, and the Town Hall.
 - Deep Forest discovery after three completed Forest explorations.
 - Discovery feedback in the exploration log and unlocked Town location list.
+- First-time arrival flow through the Village Guard and Village Chief.
+- Temporary shelter and basic gathering introduction.
 - Lightweight roadmap, ideas, mechanics, and changelog documents.
 - GitHub Actions build workflow.

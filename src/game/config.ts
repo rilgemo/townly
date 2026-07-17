@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 
+import { ArrivalScene } from "../scenes/ArrivalScene";
 import { ExploreScene } from "../scenes/ExploreScene";
 import { TownScene } from "../scenes/TownScene";
 
@@ -9,7 +10,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
   width: 960,
   height: 540,
   backgroundColor: "#121411",
-  scene: [TownScene, ExploreScene],
+  scene: [ArrivalScene, TownScene, ExploreScene],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,

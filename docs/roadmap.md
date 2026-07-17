@@ -7,6 +7,7 @@
 - [x] Add the four surrounding prototype locations.
 - [x] Add initial Forest and Mine resource collection.
 - [x] Add the first exploration-based location discovery.
+- [x] Add the first-time village arrival introduction.
 - [x] Add the first Town Hall upgrade.
 - [ ] Add local save and load.
 
