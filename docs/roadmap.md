@@ -6,7 +6,7 @@
 - [x] Create the first town screen.
 - [x] Add the four surrounding prototype locations.
 - [x] Add initial Forest and Mine resource collection.
-- [ ] Add the first town upgrade.
+- [x] Add the first Town Hall upgrade.
 - [ ] Add local save and load.
 
 ## First Playable

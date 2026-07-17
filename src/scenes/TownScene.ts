@@ -4,6 +4,11 @@ import { locations } from "../data/locations";
 import { resourceIds, resources } from "../data/resources";
 import { gameState } from "../state/GameState";
 import { getResourceAmount } from "../systems/ResourceSystem";
+import {
+  canUpgradeTownHall,
+  townHallUpgradeCost,
+  upgradeTownHall,
+} from "../systems/TownUpgradeSystem";
 import type { Direction, LocationId } from "../types/game";
 
 interface LocationButtonLayout {
@@ -39,6 +44,7 @@ export class TownScene extends Phaser.Scene {
     const town = locations.town;
     this.createLocationCard(480, 270, town.id, false);
     this.createResourcePanel();
+    this.createTownUpgradePanel();
 
     for (const layout of buttonLayouts) {
       const destination = town.exits[layout.direction];
@@ -85,6 +91,68 @@ export class TownScene extends Phaser.Scene {
     });
   }
 
+  private createTownUpgradePanel(): void {
+    const panel = this.add.graphics();
+    panel.fillStyle(0x101711, 0.92);
+    panel.fillRoundedRect(706, 44, 200, 118, 10);
+    panel.lineStyle(1, 0x9b744f, 0.85);
+    panel.strokeRoundedRect(706, 44, 200, 118, 10);
+
+    this.add.text(724, 60, `Town Hall  ·  Lv. ${gameState.town.level}`, {
+      color: "#e2cda6",
+      fontFamily: "Georgia, serif",
+      fontSize: "14px",
+      fontStyle: "bold",
+    });
+
+    if (gameState.town.level >= 2) {
+      this.add.text(724, 100, "The old hall is restored.", {
+        color: "#b9dc9d",
+        fontFamily: "Arial, sans-serif",
+        fontSize: "13px",
+      });
+      return;
+    }
+
+    const woodCost = townHallUpgradeCost.wood ?? 0;
+    const stoneCost = townHallUpgradeCost.stone ?? 0;
+    const affordable = canUpgradeTownHall();
+
+    this.add.text(724, 85, `Repair: ${woodCost} Wood + ${stoneCost} Stone`, {
+      color: "#c5cfbc",
+      fontFamily: "Arial, sans-serif",
+      fontSize: "12px",
+    });
+
+    const button = this.add.graphics();
+    button.fillStyle(affordable ? 0x7d633f : 0x3c433b, 0.9);
+    button.fillRoundedRect(724, 112, 164, 34, 7);
+
+    const buttonLabel = this.add
+      .text(806, 129, affordable ? "Repair Town Hall" : "Need resources", {
+        color: affordable ? "#fff0cf" : "#7f897c",
+        fontFamily: "Arial, sans-serif",
+        fontSize: "12px",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5);
+
+    if (!affordable) {
+      return;
+    }
+
+    const hitArea = this.add
+      .zone(806, 129, 164, 34)
+      .setInteractive({ useHandCursor: true });
+    hitArea.on("pointerover", () => buttonLabel.setColor("#ffffff"));
+    hitArea.on("pointerout", () => buttonLabel.setColor("#fff0cf"));
+    hitArea.once("pointerdown", () => {
+      if (upgradeTownHall()) {
+        this.scene.restart();
+      }
+    });
+  }
+
   private drawFrame(): void {
     const graphics = this.add.graphics();
     graphics.lineStyle(2, 0x6e7f68, 0.8);
@@ -122,11 +190,16 @@ export class TownScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(x, y + 24, interactive ? "Click to travel" : "You are here", {
+      .text(
+        x,
+        y + 24,
+        interactive ? "Click to travel" : `Town Hall Lv. ${gameState.town.level}`,
+        {
         color: interactive ? "#c5cfbc" : "#e2cda6",
         fontFamily: "Arial, sans-serif",
         fontSize: "13px",
-      })
+        },
+      )
       .setOrigin(0.5);
 
     if (!interactive) {

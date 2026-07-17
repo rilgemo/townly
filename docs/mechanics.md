@@ -18,3 +18,9 @@ This document records gameplay rules that are implemented or approved for implem
 - Forest exploration takes 10 seconds and grants 3 Wood and 1 Herb.
 - Mine exploration takes 10 seconds and grants 2 Stone.
 - Resources remain in memory for the current browser session.
+- Repairing the Town Hall costs 10 Wood and 5 Stone.
+- The first Town Hall repair raises the Town from level 1 to level 2.
+
+## Design Principle
+
+Townly progression is place-first: Town → Exploration → Growth.
