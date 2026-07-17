@@ -16,8 +16,18 @@ export interface GameState {
     lumberjackMet: boolean;
     minerMet: boolean;
   };
+  knowledge: {
+    knowsVillage: boolean;
+    surveyedVillage: boolean;
+    knowsForest: boolean;
+    knowsMine: boolean;
+    knowsWood: boolean;
+    knowsStone: boolean;
+    knowsHerb: boolean;
+  };
   introduction: {
     currentPlace: "outskirts" | "gate" | "townSquare" | "townHall";
+    lookedAround: boolean;
     guardMet: boolean;
     villageEntered: boolean;
     chiefMet: boolean;
@@ -42,8 +52,18 @@ export const gameState: GameState = {
     lumberjackMet: false,
     minerMet: false,
   },
+  knowledge: {
+    knowsVillage: false,
+    surveyedVillage: false,
+    knowsForest: false,
+    knowsMine: false,
+    knowsWood: false,
+    knowsStone: false,
+    knowsHerb: false,
+  },
   introduction: {
     currentPlace: "outskirts",
+    lookedAround: false,
     guardMet: false,
     villageEntered: false,
     chiefMet: false,

@@ -62,9 +62,14 @@ export class ArrivalScene extends Phaser.Scene {
   private renderPlace(): void {
     this.children.removeAll();
     const place = places[gameState.introduction.currentPlace];
-    renderLayout(this, place.area, place.name, {
+    renderLayout(
+      this,
+      gameState.knowledge.knowsVillage ? "Willow Village" : "Unknown",
+      place.name,
+      {
       nearbyPlaces: this.getNearbyPlaces(),
-    });
+      },
+    );
 
     addSectionTitle(this, columns.center, 32, "Current Place");
     this.add.text(columns.center, 60, place.name, {
@@ -109,7 +114,13 @@ export class ArrivalScene extends Phaser.Scene {
     const place = gameState.introduction.currentPlace;
 
     if (place === "outskirts") {
-      createTextAction(this, columns.center, 302, "Approach the village gate", () => {
+      createTextAction(this, columns.center, 302, "Look around", () => {
+        gameState.introduction.lookedAround = true;
+        this.message =
+          "You notice a weathered wooden gate ahead. A guard stands beside it.";
+        this.renderPlace();
+      });
+      createTextAction(this, columns.center, 332, "Approach the village gate", () => {
         gameState.introduction.currentPlace = "gate";
         this.message = "You follow the road to the gate.";
         this.renderPlace();
@@ -121,8 +132,9 @@ export class ArrivalScene extends Phaser.Scene {
       if (!gameState.introduction.guardMet) {
         createTextAction(this, columns.center, 302, "Speak with Village Guard", () => {
           gameState.introduction.guardMet = true;
+          gameState.knowledge.knowsVillage = true;
           this.message =
-            'Village Guard: "We have little, but we turn away no one in need. Speak with the Chief."';
+            'Village Guard: "You are standing outside Willow Village. We turn away no one in need. Speak with the Chief." New knowledge: Willow Village.';
           this.renderPlace();
         });
       } else {
@@ -154,7 +166,7 @@ export class ArrivalScene extends Phaser.Scene {
         gameState.introduction.chiefMet = true;
         gameState.introduction.shelterReceived = true;
         this.message =
-          'Village Chief: "Use the empty shelter. Wood, stone, and herbs can be gathered nearby."';
+          'Village Chief: "Use the empty shelter. You can find useful materials through work around the village."';
         this.renderPlace();
       });
       return;
@@ -173,10 +185,12 @@ export class ArrivalScene extends Phaser.Scene {
   private getNearbyPlaces(): string[] {
     const place = gameState.introduction.currentPlace;
     if (place === "outskirts") {
-      return ["Village Gate", "Old Road"];
+      return gameState.introduction.lookedAround ? ["Village Gate"] : [];
     }
     if (place === "gate") {
-      return ["Village Outskirts", "Town Square"];
+      return gameState.knowledge.knowsVillage
+        ? ["Old Road", "Town Square"]
+        : ["Old Road"];
     }
     if (place === "townSquare") {
       return ["Village Gate", "Town Hall"];

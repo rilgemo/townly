@@ -32,6 +32,15 @@ export function completeExploration(
   exploration: Exploration,
 ): ExplorationResult {
   addResources(exploration.reward);
+  if ((exploration.reward.wood ?? 0) > 0) {
+    gameState.knowledge.knowsWood = true;
+  }
+  if ((exploration.reward.stone ?? 0) > 0) {
+    gameState.knowledge.knowsStone = true;
+  }
+  if ((exploration.reward.herb ?? 0) > 0) {
+    gameState.knowledge.knowsHerb = true;
+  }
   gameState.explorationCounts[locationId] =
     (gameState.explorationCounts[locationId] ?? 0) + 1;
 

@@ -86,8 +86,12 @@ function renderPlayerSidebar(scene: Phaser.Scene): void {
   scene.add.text(columns.left, 200, "Status     Ready", bodyStyle());
   scene.add.text(columns.left, 224, "Shelter    " + (gameState.introduction.shelterReceived ? "Available" : "None"), bodyStyle());
 
-  addSectionTitle(scene, columns.left, 270, "Carried Resources");
-  resourceIds.forEach((resourceId, index) => {
+  addSectionTitle(scene, columns.left, 270, "Carrying");
+  const knownResourceIds = resourceIds.filter(isResourceKnown);
+  if (knownResourceIds.length === 0) {
+    scene.add.text(columns.left, 296, "Nothing", bodyStyle(colors.muted));
+  }
+  knownResourceIds.forEach((resourceId, index) => {
     const resource = resources[resourceId];
     scene.add.text(
       columns.left,
@@ -118,16 +122,11 @@ function renderWorldSidebar(
   scene.add.text(columns.right, 94, currentPlace, bodyStyle(colors.secondary));
 
   addSectionTitle(scene, columns.right, 158, "Time");
-  scene.add.text(columns.right, 186, "Day 1", bodyStyle());
-  scene.add.text(columns.right, 212, "--:--", bodyStyle(colors.muted));
-  scene.add.text(columns.right, 244, "Time does not pass\nhere yet.", {
-    ...bodyStyle(colors.muted),
-    lineSpacing: 6,
-  });
+  scene.add.text(columns.right, 186, "Morning", bodyStyle());
+  scene.add.text(columns.right, 212, "Day 1", bodyStyle(colors.muted));
 
   addSectionTitle(scene, columns.right, 306, "Weather");
-  scene.add.text(columns.right, 334, "—", bodyStyle(colors.muted));
-  scene.add.text(columns.right, 360, "Not observed yet.", bodyStyle(colors.muted));
+  scene.add.text(columns.right, 334, "Clear", bodyStyle());
 
   addSectionTitle(scene, columns.right, 410, "Nearby / Known");
   if (nearbyPlaces.length === 0) {
@@ -143,10 +142,13 @@ function renderWorldSidebar(
 function getKnownKnowledge(): string[] {
   const knowledge: string[] = [];
 
-  if (gameState.villagePeople.lumberjackMet) {
+  if (gameState.knowledge.knowsVillage) {
+    knowledge.push("Willow Village");
+  }
+  if (gameState.knowledge.knowsForest) {
     knowledge.push("Forest path");
   }
-  if (gameState.villagePeople.minerMet) {
+  if (gameState.knowledge.knowsMine) {
     knowledge.push("Mine side passage");
   }
   if (gameState.discoveredLocations.includes("deepForest")) {
@@ -156,7 +158,17 @@ function getKnownKnowledge(): string[] {
     knowledge.push("Restored Town Hall");
   }
 
-  return knowledge.length > 0 ? knowledge : ["Village hospitality"];
+  return knowledge.length > 0 ? knowledge : ["Unknown"];
+}
+
+function isResourceKnown(resourceId: (typeof resourceIds)[number]): boolean {
+  if (resourceId === "wood") {
+    return gameState.knowledge.knowsWood;
+  }
+  if (resourceId === "stone") {
+    return gameState.knowledge.knowsStone;
+  }
+  return gameState.knowledge.knowsHerb;
 }
 
 function bodyStyle(color = colors.secondary): Phaser.Types.GameObjects.Text.TextStyle {

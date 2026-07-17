@@ -60,7 +60,7 @@ export class TownScene extends Phaser.Scene {
   private renderTown(): void {
     this.children.removeAll();
     const place = townPlaces[gameState.currentTownPlace];
-    renderLayout(this, "Townly", place.name, {
+    renderLayout(this, gameState.knowledge.knowsVillage ? "Willow Village" : "Unknown", place.name, {
       nearbyPlaces: this.getNearbyPlaces(),
     });
 
@@ -131,6 +131,17 @@ export class TownScene extends Phaser.Scene {
       this.renderTown();
     });
     actionY += 26;
+
+    if (!gameState.knowledge.surveyedVillage) {
+      createTextAction(this, columns.center, actionY, "Look around Town Square", () => {
+        gameState.knowledge.surveyedVillage = true;
+        this.message =
+          "You notice cottages near the village edge and an old road leading toward a blocked mine.";
+        this.renderTown();
+      });
+      return;
+    }
+
     createTextAction(this, columns.center, actionY, "Visit Village Edge", () => {
       gameState.currentTownPlace = "villageEdge";
       this.message = "You walk toward the cottages at the village edge.";
@@ -167,11 +178,15 @@ export class TownScene extends Phaser.Scene {
       const woodCost = townHallUpgradeCost.wood ?? 0;
       const stoneCost = townHallUpgradeCost.stone ?? 0;
       const affordable = canUpgradeTownHall();
+      const knowsRequirements =
+        gameState.knowledge.knowsWood && gameState.knowledge.knowsStone;
       createTextAction(
         this,
         columns.center,
         312,
-        affordable
+        !knowsRequirements
+          ? "Repair requirements are not understood yet"
+          : affordable
           ? `Repair Town Hall (${woodCost} Wood, ${stoneCost} Stone)`
           : `Town Hall repair requires ${woodCost} Wood, ${stoneCost} Stone`,
         () => {
@@ -180,7 +195,7 @@ export class TownScene extends Phaser.Scene {
             this.renderTown();
           }
         },
-        affordable,
+        knowsRequirements && affordable,
       );
     }
 
@@ -195,6 +210,7 @@ export class TownScene extends Phaser.Scene {
     if (!gameState.villagePeople.lumberjackMet) {
       createTextAction(this, columns.center, 280, "Speak with 🪓 Lumberjack", () => {
         gameState.villagePeople.lumberjackMet = true;
+        gameState.knowledge.knowsForest = true;
         this.unlockLocation("forest");
         this.message =
           'Lumberjack: "The forest path is badly overgrown. I cleared enough for you to pass." Forest unlocked.';
@@ -203,7 +219,7 @@ export class TownScene extends Phaser.Scene {
     } else {
       createTextAction(this, columns.center, 280, "Speak with 🪓 Lumberjack", () => {
         this.message =
-          'Lumberjack: "The path is open. The forest should provide wood and useful herbs."';
+          'Lumberjack: "The path is open. You should find useful material beneath the trees."';
         this.renderTown();
       });
       this.createTravelAction("forest", 306);
@@ -220,6 +236,7 @@ export class TownScene extends Phaser.Scene {
     if (!gameState.villagePeople.minerMet) {
       createTextAction(this, columns.center, 280, "Speak with ⛏ Miner", () => {
         gameState.villagePeople.minerMet = true;
+        gameState.knowledge.knowsMine = true;
         this.unlockLocation("mine");
         this.message =
           'Miner: "The main entrance is blocked, but I opened a narrow side passage." Mine unlocked.';
@@ -228,7 +245,7 @@ export class TownScene extends Phaser.Scene {
     } else {
       createTextAction(this, columns.center, 280, "Speak with ⛏ Miner", () => {
         this.message =
-          'Miner: "The side passage is stable enough. You should find stone inside."';
+          'Miner: "The side passage is stable enough. There may be useful material inside."';
         this.renderTown();
       });
       this.createTravelAction("mine", 306);
@@ -273,6 +290,17 @@ export class TownScene extends Phaser.Scene {
         : ["Town Square", "Blocked tunnel"];
     }
 
-    return ["Town Hall", "Village Edge", "Old Mine Entrance"];
+    if (!gameState.knowledge.surveyedVillage) {
+      return ["Town Hall"];
+    }
+
+    const knownPlaces = ["Town Hall", "Village Edge", "Old Mine Entrance"];
+    if (gameState.discoveredLocations.includes("plains")) {
+      knownPlaces.push("Plains");
+    }
+    if (gameState.discoveredLocations.includes("lake")) {
+      knownPlaces.push("Lake");
+    }
+    return knownPlaces;
   }
 }

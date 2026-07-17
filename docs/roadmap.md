@@ -9,6 +9,7 @@
 - [x] Add the first exploration-based location discovery.
 - [x] Add the first-time village arrival introduction.
 - [x] Connect the Lumberjack and Miner to Forest and Mine access.
+- [x] Gate interface information behind player knowledge.
 - [x] Add the first Town Hall upgrade.
 - [ ] Add local save and load.
 

@@ -83,7 +83,7 @@ export class ExploreScene extends Phaser.Scene {
     const exploration = getExploration(this.locationId);
 
     if (exploration) {
-      const reward = this.formatReward(exploration.reward);
+      const reward = this.formatRewardPreview(exploration.reward);
       createTextAction(
         this,
         columns.center,
@@ -159,6 +159,27 @@ export class ExploreScene extends Phaser.Scene {
           `${amount} ${resources[resourceId as ResourceId].name}`,
       )
       .join(", ");
+  }
+
+  private formatRewardPreview(reward: ResourceReward): string {
+    const knownRewards = Object.entries(reward).filter(([resourceId]) => {
+      if (resourceId === "wood") {
+        return gameState.knowledge.knowsWood;
+      }
+      if (resourceId === "stone") {
+        return gameState.knowledge.knowsStone;
+      }
+      return gameState.knowledge.knowsHerb;
+    });
+
+    if (knownRewards.length === 0) {
+      return "unknown result";
+    }
+
+    const knownText = this.formatReward(Object.fromEntries(knownRewards));
+    return knownRewards.length < Object.keys(reward).length
+      ? `${knownText}, something unknown`
+      : knownText;
   }
 
   private getNearbyPlaces(): string[] {

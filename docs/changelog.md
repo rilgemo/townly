@@ -27,5 +27,8 @@ Notable project changes are recorded here.
 - Player-centric left column for identity, condition, carried resources, and known information.
 - World-context right column with area, time, weather, and nearby places.
 - Town Hall represented as an enterable place with building details shown only inside.
+- Knowledge-driven interface hiding unknown areas, places, and resources.
+- Old Road observation and Village Guard reveal flow for Willow Village.
+- Resource knowledge revealed through first collection.
 - Lightweight roadmap, ideas, mechanics, and changelog documents.
 - GitHub Actions build workflow.

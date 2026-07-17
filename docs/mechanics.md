@@ -28,6 +28,9 @@ This document records gameplay rules that are implemented or approved for implem
 - Forest access begins locked and is opened by speaking with the Lumberjack at the Village Edge.
 - Mine access begins locked and is opened by speaking with the Miner at the Old Mine Entrance.
 - Buildings are presented as places; Town Hall condition and upgrade actions appear only while inside it.
+- Village name, nearby places, resource names, and travel actions appear only after the player learns or observes them.
+- Looking around reveals local possibilities; the Village Guard reveals the name Willow Village.
+- A resource first appears in the player panel after it has been collected.
 
 ## Design Principle
 
