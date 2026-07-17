@@ -22,5 +22,7 @@ Notable project changes are recorded here.
 - Three-column text RPG layout for town, place information, and area context.
 - Place-based arrival interactions replacing the linear introduction sequence.
 - Contextual action lists generated from the current place state.
+- Lumberjack interaction at the Village Edge unlocking Forest access.
+- Miner interaction at the Old Mine Entrance unlocking Mine access.
 - Lightweight roadmap, ideas, mechanics, and changelog documents.
 - GitHub Actions build workflow.

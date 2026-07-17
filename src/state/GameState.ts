@@ -7,6 +7,11 @@ export interface GameState {
   };
   discoveredLocations: LocationId[];
   explorationCounts: Partial<Record<LocationId, number>>;
+  currentTownPlace: "townSquare" | "villageEdge" | "mineEntrance";
+  villagePeople: {
+    lumberjackMet: boolean;
+    minerMet: boolean;
+  };
   introduction: {
     currentPlace: "outskirts" | "gate" | "townSquare" | "townHall";
     guardMet: boolean;
@@ -26,8 +31,13 @@ export const gameState: GameState = {
   town: {
     level: 1,
   },
-  discoveredLocations: ["town", "forest", "mine", "plains", "lake"],
+  discoveredLocations: ["town", "plains", "lake"],
   explorationCounts: {},
+  currentTownPlace: "townSquare",
+  villagePeople: {
+    lumberjackMet: false,
+    minerMet: false,
+  },
   introduction: {
     currentPlace: "outskirts",
     guardMet: false,

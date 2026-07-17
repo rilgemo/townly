@@ -25,6 +25,8 @@ This document records gameplay rules that are implemented or approved for implem
 - A new player arrives outside the village, meets the Village Guard, and is admitted through the gate.
 - The Village Chief provides temporary shelter and introduces basic gathering work.
 - The arrival sequence advances through places and contextual NPC actions rather than a linear dialogue chain.
+- Forest access begins locked and is opened by speaking with the Lumberjack at the Village Edge.
+- Mine access begins locked and is opened by speaking with the Miner at the Old Mine Entrance.
 
 ## Design Principle
 
