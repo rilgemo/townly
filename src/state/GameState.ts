@@ -7,7 +7,11 @@ export interface GameState {
   };
   discoveredLocations: LocationId[];
   explorationCounts: Partial<Record<LocationId, number>>;
-  currentTownPlace: "townSquare" | "villageEdge" | "mineEntrance";
+  currentTownPlace:
+    | "townSquare"
+    | "townHall"
+    | "villageEdge"
+    | "mineEntrance";
   villagePeople: {
     lumberjackMet: boolean;
     minerMet: boolean;

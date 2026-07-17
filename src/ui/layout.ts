@@ -11,10 +11,15 @@ export const columns = {
   right: 726,
 };
 
+interface LayoutContext {
+  nearbyPlaces?: string[];
+}
+
 export function renderLayout(
   scene: Phaser.Scene,
   currentArea: string,
   currentPlace: string,
+  context: LayoutContext = {},
 ): void {
   scene.cameras.main.setBackgroundColor(colors.background);
 
@@ -23,8 +28,8 @@ export function renderLayout(
   dividers.lineBetween(260, 24, 260, 516);
   dividers.lineBetween(700, 24, 700, 516);
 
-  renderTownSidebar(scene);
-  renderAreaSidebar(scene, currentArea, currentPlace);
+  renderPlayerSidebar(scene);
+  renderWorldSidebar(scene, currentArea, currentPlace, context.nearbyPlaces ?? []);
 }
 
 export function addSectionTitle(
@@ -66,42 +71,43 @@ export function createTextAction(
   return action;
 }
 
-function renderTownSidebar(scene: Phaser.Scene): void {
-  scene.add.text(columns.left, 28, "🏠 TOWNLY", {
+function renderPlayerSidebar(scene: Phaser.Scene): void {
+  scene.add.text(columns.left, 28, "PLAYER", {
     color: colors.primary,
     fontFamily: fonts.title,
     fontSize: "22px",
   });
 
-  addSectionTitle(scene, columns.left, 78, "Town Status");
-  scene.add.text(columns.left, 104, `Town Level     ${gameState.town.level}`, bodyStyle());
-  scene.add.text(columns.left, 128, `Player         ${gameState.player.name}`, bodyStyle());
+  addSectionTitle(scene, columns.left, 78, "Identity");
+  scene.add.text(columns.left, 104, `Name       ${gameState.player.name}`, bodyStyle());
+  scene.add.text(columns.left, 128, "Role       Newcomer", bodyStyle());
 
-  addSectionTitle(scene, columns.left, 178, "Resources");
+  addSectionTitle(scene, columns.left, 174, "Condition");
+  scene.add.text(columns.left, 200, "Status     Ready", bodyStyle());
+  scene.add.text(columns.left, 224, "Shelter    " + (gameState.introduction.shelterReceived ? "Available" : "None"), bodyStyle());
+
+  addSectionTitle(scene, columns.left, 270, "Carried Resources");
   resourceIds.forEach((resourceId, index) => {
     const resource = resources[resourceId];
     scene.add.text(
       columns.left,
-      204 + index * 26,
+      296 + index * 24,
       `${resource.symbol} ${resource.name.padEnd(8)} ${getResourceAmount(resourceId)}`,
       bodyStyle(),
     );
   });
 
-  addSectionTitle(scene, columns.left, 314, "Buildings");
-  scene.add.text(columns.left, 340, `🏛 Town Hall    Lv.${gameState.town.level}`, bodyStyle());
-  scene.add.text(
-    columns.left,
-    366,
-    `🛖 Shelter      ${gameState.introduction.shelterReceived ? "Temporary" : "—"}`,
-    bodyStyle(),
-  );
+  addSectionTitle(scene, columns.left, 398, "Known");
+  getKnownKnowledge().forEach((knowledge, index) => {
+    scene.add.text(columns.left, 424 + index * 22, `· ${knowledge}`, bodyStyle(colors.muted));
+  });
 }
 
-function renderAreaSidebar(
+function renderWorldSidebar(
   scene: Phaser.Scene,
   currentArea: string,
   currentPlace: string,
+  nearbyPlaces: string[],
 ): void {
   addSectionTitle(scene, columns.right, 32, "Current Area");
   scene.add.text(columns.right, 62, currentArea, {
@@ -118,6 +124,39 @@ function renderAreaSidebar(
     ...bodyStyle(colors.muted),
     lineSpacing: 6,
   });
+
+  addSectionTitle(scene, columns.right, 306, "Weather");
+  scene.add.text(columns.right, 334, "—", bodyStyle(colors.muted));
+  scene.add.text(columns.right, 360, "Not observed yet.", bodyStyle(colors.muted));
+
+  addSectionTitle(scene, columns.right, 410, "Nearby / Known");
+  if (nearbyPlaces.length === 0) {
+    scene.add.text(columns.right, 438, "Nothing recorded.", bodyStyle(colors.muted));
+    return;
+  }
+
+  nearbyPlaces.slice(0, 4).forEach((place, index) => {
+    scene.add.text(columns.right, 438 + index * 22, `· ${place}`, bodyStyle());
+  });
+}
+
+function getKnownKnowledge(): string[] {
+  const knowledge: string[] = [];
+
+  if (gameState.villagePeople.lumberjackMet) {
+    knowledge.push("Forest path");
+  }
+  if (gameState.villagePeople.minerMet) {
+    knowledge.push("Mine side passage");
+  }
+  if (gameState.discoveredLocations.includes("deepForest")) {
+    knowledge.push("Hidden forest path");
+  }
+  if (gameState.town.level >= 2) {
+    knowledge.push("Restored Town Hall");
+  }
+
+  return knowledge.length > 0 ? knowledge : ["Village hospitality"];
 }
 
 function bodyStyle(color = colors.secondary): Phaser.Types.GameObjects.Text.TextStyle {

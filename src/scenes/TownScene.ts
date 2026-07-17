@@ -27,7 +27,12 @@ const townPlaces: Record<typeof gameState.currentTownPlace, TownPlace> = {
   townSquare: {
     name: "Town Square",
     description: "A small settlement slowly comes alive. Paths lead toward\nthe village edge and the old mine road.",
-    npcIds: ["guard", "chief"],
+    npcIds: ["guard"],
+  },
+  townHall: {
+    name: "Town Hall",
+    description: "The hall contains the village records and a long communal table.\nIts worn structure reflects the condition of the town.",
+    npcIds: ["chief"],
   },
   villageEdge: {
     name: "Village Edge",
@@ -55,7 +60,9 @@ export class TownScene extends Phaser.Scene {
   private renderTown(): void {
     this.children.removeAll();
     const place = townPlaces[gameState.currentTownPlace];
-    renderLayout(this, "Townly", place.name);
+    renderLayout(this, "Townly", place.name, {
+      nearbyPlaces: this.getNearbyPlaces(),
+    });
 
     addSectionTitle(this, columns.center, 32, "Current Place");
     this.add.text(columns.center, 60, place.name, {
@@ -63,7 +70,11 @@ export class TownScene extends Phaser.Scene {
       fontFamily: fonts.title,
       fontSize: "25px",
     });
-    this.add.text(columns.center, 102, place.description, {
+    const placeDescription =
+      gameState.currentTownPlace === "townHall"
+        ? `${place.description}\nTown Hall Level: ${gameState.town.level}`
+        : place.description;
+    this.add.text(columns.center, 102, placeDescription, {
       color: colors.secondary,
       fontFamily: fonts.body,
       fontSize: "13px",
@@ -108,7 +119,18 @@ export class TownScene extends Phaser.Scene {
       return;
     }
 
+    if (gameState.currentTownPlace === "townHall") {
+      this.renderTownHallActions();
+      return;
+    }
+
     let actionY = 280;
+    createTextAction(this, columns.center, actionY, "Enter Town Hall", () => {
+      gameState.currentTownPlace = "townHall";
+      this.message = "You enter the old Town Hall.";
+      this.renderTown();
+    });
+    actionY += 26;
     createTextAction(this, columns.center, actionY, "Visit Village Edge", () => {
       gameState.currentTownPlace = "villageEdge";
       this.message = "You walk toward the cottages at the village edge.";
@@ -130,6 +152,17 @@ export class TownScene extends Phaser.Scene {
       actionY += 26;
     }
 
+  }
+
+  private renderTownHallActions(): void {
+    createTextAction(this, columns.center, 280, "Speak with 👴 Village Chief", () => {
+      this.message =
+        gameState.town.level >= 2
+          ? 'Village Chief: "The restored hall has given everyone some hope."'
+          : 'Village Chief: "The hall can be repaired, if the village gathers enough material."';
+      this.renderTown();
+    });
+
     if (gameState.town.level === 1) {
       const woodCost = townHallUpgradeCost.wood ?? 0;
       const stoneCost = townHallUpgradeCost.stone ?? 0;
@@ -137,7 +170,7 @@ export class TownScene extends Phaser.Scene {
       createTextAction(
         this,
         columns.center,
-        actionY,
+        312,
         affordable
           ? `Repair Town Hall (${woodCost} Wood, ${stoneCost} Stone)`
           : `Town Hall repair requires ${woodCost} Wood, ${stoneCost} Stone`,
@@ -150,6 +183,12 @@ export class TownScene extends Phaser.Scene {
         affordable,
       );
     }
+
+    createTextAction(this, columns.center, 350, "Return to Town Square", () => {
+      gameState.currentTownPlace = "townSquare";
+      this.message = "You step back into the Town Square.";
+      this.renderTown();
+    });
   }
 
   private renderLumberjackActions(): void {
@@ -217,5 +256,23 @@ export class TownScene extends Phaser.Scene {
     if (!gameState.discoveredLocations.includes(locationId)) {
       gameState.discoveredLocations.push(locationId);
     }
+  }
+
+  private getNearbyPlaces(): string[] {
+    if (gameState.currentTownPlace === "townHall") {
+      return ["Town Square"];
+    }
+    if (gameState.currentTownPlace === "villageEdge") {
+      return gameState.villagePeople.lumberjackMet
+        ? ["Town Square", "Forest"]
+        : ["Town Square", "Overgrown path"];
+    }
+    if (gameState.currentTownPlace === "mineEntrance") {
+      return gameState.villagePeople.minerMet
+        ? ["Town Square", "Mine"]
+        : ["Town Square", "Blocked tunnel"];
+    }
+
+    return ["Town Hall", "Village Edge", "Old Mine Entrance"];
   }
 }

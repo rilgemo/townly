@@ -24,5 +24,8 @@ Notable project changes are recorded here.
 - Contextual action lists generated from the current place state.
 - Lumberjack interaction at the Village Edge unlocking Forest access.
 - Miner interaction at the Old Mine Entrance unlocking Mine access.
+- Player-centric left column for identity, condition, carried resources, and known information.
+- World-context right column with area, time, weather, and nearby places.
+- Town Hall represented as an enterable place with building details shown only inside.
 - Lightweight roadmap, ideas, mechanics, and changelog documents.
 - GitHub Actions build workflow.

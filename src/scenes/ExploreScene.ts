@@ -2,6 +2,7 @@ import Phaser from "phaser";
 
 import { locations } from "../data/locations";
 import { resources } from "../data/resources";
+import { gameState } from "../state/GameState";
 import {
   completeExploration,
   getExploration,
@@ -42,7 +43,9 @@ export class ExploreScene extends Phaser.Scene {
   private renderPlace(): void {
     this.children.removeAll();
     const location = locations[this.locationId];
-    renderLayout(this, "Surrounding Wilds", location.name);
+    renderLayout(this, "Surrounding Wilds", location.name, {
+      nearbyPlaces: this.getNearbyPlaces(),
+    });
 
     addSectionTitle(this, columns.center, 32, "Current Place");
     this.add.text(columns.center, 60, `${location.symbol} ${location.name}`, {
@@ -156,5 +159,16 @@ export class ExploreScene extends Phaser.Scene {
           `${amount} ${resources[resourceId as ResourceId].name}`,
       )
       .join(", ");
+  }
+
+  private getNearbyPlaces(): string[] {
+    const nearby = ["Townly"];
+    if (
+      this.locationId === "forest" &&
+      gameState.discoveredLocations.includes("deepForest")
+    ) {
+      nearby.push("Deep Forest");
+    }
+    return nearby;
   }
 }

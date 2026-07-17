@@ -27,6 +27,7 @@ This document records gameplay rules that are implemented or approved for implem
 - The arrival sequence advances through places and contextual NPC actions rather than a linear dialogue chain.
 - Forest access begins locked and is opened by speaking with the Lumberjack at the Village Edge.
 - Mine access begins locked and is opened by speaking with the Miner at the Old Mine Entrance.
+- Buildings are presented as places; Town Hall condition and upgrade actions appear only while inside it.
 
 ## Design Principle
 

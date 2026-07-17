@@ -62,7 +62,9 @@ export class ArrivalScene extends Phaser.Scene {
   private renderPlace(): void {
     this.children.removeAll();
     const place = places[gameState.introduction.currentPlace];
-    renderLayout(this, place.area, place.name);
+    renderLayout(this, place.area, place.name, {
+      nearbyPlaces: this.getNearbyPlaces(),
+    });
 
     addSectionTitle(this, columns.center, 32, "Current Place");
     this.add.text(columns.center, 60, place.name, {
@@ -166,5 +168,19 @@ export class ArrivalScene extends Phaser.Scene {
       this.message = 'Village Chief: "Start with simple work. The village will grow in time."';
       this.renderPlace();
     });
+  }
+
+  private getNearbyPlaces(): string[] {
+    const place = gameState.introduction.currentPlace;
+    if (place === "outskirts") {
+      return ["Village Gate", "Old Road"];
+    }
+    if (place === "gate") {
+      return ["Village Outskirts", "Town Square"];
+    }
+    if (place === "townSquare") {
+      return ["Village Gate", "Town Hall"];
+    }
+    return ["Town Square"];
   }
 }
