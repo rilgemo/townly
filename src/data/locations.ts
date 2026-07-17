@@ -22,6 +22,14 @@ export const locations: Record<LocationId, Location> = {
     color: 0x4f7a4b,
     exits: { south: "town" },
   },
+  deepForest: {
+    id: "deepForest",
+    name: "Deep Forest",
+    symbol: "🌳",
+    description: "An old path leads beneath a darker canopy.",
+    color: 0x35583a,
+    exits: { south: "town" },
+  },
   mine: {
     id: "mine",
     name: "Mine",

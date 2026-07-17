@@ -20,6 +20,8 @@ This document records gameplay rules that are implemented or approved for implem
 - Resources remain in memory for the current browser session.
 - Repairing the Town Hall costs 10 Wood and 5 Stone.
 - The first Town Hall repair raises the Town from level 1 to level 2.
+- Completing Forest exploration three times reveals Deep Forest.
+- Deep Forest is added to the Town location list when discovered.
 
 ## Design Principle
 

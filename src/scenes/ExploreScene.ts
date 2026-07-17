@@ -140,11 +140,30 @@ export class ExploreScene extends Phaser.Scene {
           return;
         }
 
-        const reward = completeExploration(exploration);
+        const result = completeExploration(this.locationId, exploration);
         action.setText("[ Complete ]").setColor(colors.success);
-        status.setColor(colors.success).setText(`Obtained    ${this.formatReward(reward)}`);
+        status
+          .setColor(colors.success)
+          .setText(this.formatExplorationResult(result.reward, result.discoveredLocation));
       },
     });
+  }
+
+  private formatExplorationResult(
+    reward: ResourceReward,
+    discoveredLocation?: LocationId,
+  ): string {
+    const lines = [`Obtained    ${this.formatReward(reward)}`];
+
+    if (discoveredLocation) {
+      lines.push(
+        "",
+        "You discovered a hidden path.",
+        `New location unlocked: ${locations[discoveredLocation].name}`,
+      );
+    }
+
+    return lines.join("\n");
   }
 
   private formatReward(reward: ResourceReward): string {

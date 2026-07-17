@@ -15,5 +15,7 @@ Notable project changes are recorded here.
 - Town Hall repair costing 10 Wood and 5 Stone, raising Town to level 2.
 - Minimalist text-driven interface replacing the prototype map cards.
 - Lightweight emoji anchors for resources, locations, and the Town Hall.
+- Deep Forest discovery after three completed Forest explorations.
+- Discovery feedback in the exploration log and unlocked Town location list.
 - Lightweight roadmap, ideas, mechanics, and changelog documents.
 - GitHub Actions build workflow.

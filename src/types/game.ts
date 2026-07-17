@@ -1,6 +1,12 @@
 export type Direction = "north" | "east" | "south" | "west";
 
-export type LocationId = "town" | "forest" | "mine" | "plains" | "lake";
+export type LocationId =
+  | "town"
+  | "forest"
+  | "deepForest"
+  | "mine"
+  | "plains"
+  | "lake";
 
 export type ResourceId = "wood" | "stone" | "herb";
 

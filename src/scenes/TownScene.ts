@@ -9,10 +9,8 @@ import {
   townHallUpgradeCost,
   upgradeTownHall,
 } from "../systems/TownUpgradeSystem";
-import type { Direction, LocationId } from "../types/game";
+import type { LocationId } from "../types/game";
 import { addDivider, colors, fonts } from "../ui/theme";
-
-const directions: Direction[] = ["north", "west", "east", "south"];
 
 export class TownScene extends Phaser.Scene {
   constructor() {
@@ -83,13 +81,11 @@ export class TownScene extends Phaser.Scene {
       fontStyle: "bold",
     });
 
-    const town = locations.town;
-    directions.forEach((direction, index) => {
-      const destination = town.exits[direction];
-      if (destination) {
-        this.createLocationEntry(destination, 276 + index * 52);
-      }
-    });
+    gameState.discoveredLocations
+      .filter((locationId) => locationId !== "town")
+      .forEach((locationId, index) => {
+        this.createLocationEntry(locationId, 276 + index * 48);
+      });
   }
 
   private createLocationEntry(locationId: LocationId, y: number): void {
