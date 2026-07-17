@@ -14,4 +14,7 @@ This document records gameplay rules that are implemented or approved for implem
 
 ## Implemented
 
-No gameplay mechanics are implemented yet.
+- The player can travel from Town to four surrounding locations and return.
+- Forest exploration takes 10 seconds and grants 3 Wood and 1 Herb.
+- Mine exploration takes 10 seconds and grants 2 Stone.
+- Resources remain in memory for the current browser session.

@@ -1,6 +1,9 @@
 import Phaser from "phaser";
 
 import { locations } from "../data/locations";
+import { resourceIds, resources } from "../data/resources";
+import { gameState } from "../state/GameState";
+import { getResourceAmount } from "../systems/ResourceSystem";
 import type { Direction, LocationId } from "../types/game";
 
 interface LocationButtonLayout {
@@ -35,6 +38,7 @@ export class TownScene extends Phaser.Scene {
 
     const town = locations.town;
     this.createLocationCard(480, 270, town.id, false);
+    this.createResourcePanel();
 
     for (const layout of buttonLayouts) {
       const destination = town.exits[layout.direction];
@@ -50,6 +54,35 @@ export class TownScene extends Phaser.Scene {
         fontSize: "14px",
       })
       .setOrigin(0.5);
+  }
+
+  private createResourcePanel(): void {
+    const panel = this.add.graphics();
+    panel.fillStyle(0x101711, 0.92);
+    panel.fillRoundedRect(54, 44, 190, 118, 10);
+    panel.lineStyle(1, 0x6e7f68, 0.75);
+    panel.strokeRoundedRect(54, 44, 190, 118, 10);
+
+    this.add.text(72, 60, `${gameState.player.name}  ·  Lv. ${gameState.player.level}`, {
+      color: "#e2cda6",
+      fontFamily: "Georgia, serif",
+      fontSize: "14px",
+      fontStyle: "bold",
+    });
+
+    resourceIds.forEach((resourceId, index) => {
+      const resource = resources[resourceId];
+      this.add.text(
+        72,
+        88 + index * 21,
+        `${resource.symbol}  ${resource.name}: ${getResourceAmount(resourceId)}`,
+        {
+          color: "#c5cfbc",
+          fontFamily: "Arial, sans-serif",
+          fontSize: "13px",
+        },
+      );
+    });
   }
 
   private drawFrame(): void {

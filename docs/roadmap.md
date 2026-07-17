@@ -5,7 +5,7 @@
 - [x] Establish the location navigation loop.
 - [x] Create the first town screen.
 - [x] Add the four surrounding prototype locations.
-- [ ] Add resource discovery and collection.
+- [x] Add initial Forest and Mine resource collection.
 - [ ] Add the first town upgrade.
 - [ ] Add local save and load.
 
