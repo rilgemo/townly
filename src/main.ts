@@ -1,6 +1,4 @@
-import Phaser from "phaser";
-
-import { phaserConfig } from "../phaser.config";
+import { startGame } from "./game/Game";
 import "./styles.css";
 
-new Phaser.Game(phaserConfig);
+startGame();

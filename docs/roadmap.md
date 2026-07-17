@@ -2,9 +2,9 @@
 
 ## Prototype
 
-- [ ] Establish the core game loop.
-- [ ] Create the first town screen.
-- [ ] Add the first explorable region: Forest.
+- [x] Establish the location navigation loop.
+- [x] Create the first town screen.
+- [x] Add the four surrounding prototype locations.
 - [ ] Add resource discovery and collection.
 - [ ] Add the first town upgrade.
 - [ ] Add local save and load.
