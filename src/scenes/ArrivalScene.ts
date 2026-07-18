@@ -2,7 +2,6 @@ import Phaser from "phaser";
 
 import { gameState } from "../state/GameState";
 import {
-  addSectionTitle,
   columns,
   createTextAction,
   renderLayout,
@@ -10,7 +9,6 @@ import {
 import { colors, fonts } from "../ui/theme";
 
 interface PlaceContent {
-  area: string;
   name: string;
   description: string;
   npcs: string[];
@@ -18,28 +16,24 @@ interface PlaceContent {
 
 const places: Record<typeof gameState.introduction.currentPlace, PlaceContent> = {
   outskirts: {
-    area: "Village Outskirts",
     name: "The Old Road",
     description: "You wake beside an unfamiliar road. The morning is quiet.\nA weathered wooden gate stands some distance ahead.",
     npcs: [],
   },
   gate: {
-    area: "Village Outskirts",
     name: "Village Gate",
     description: "A weathered gate marks the village boundary.\nThe guard studies every traveler who approaches.",
-    npcs: ["🛡 Village Guard"],
+    npcs: ["🛡 Village Guard\nThe old guard quietly watches the road."],
   },
   townSquare: {
-    area: "Townly",
     name: "Town Square",
     description: "The village is quiet, but not abandoned.\nA few people continue their work among the old buildings.",
-    npcs: ["🛡 Village Guard"],
+    npcs: ["🛡 Village Guard\nHe keeps one eye on the village gate."],
   },
   townHall: {
-    area: "Townly",
     name: "Town Hall",
     description: "The old hall has seen better years. A small fire burns within.\nThe Village Chief waits beside a table of village records.",
-    npcs: ["👴 Village Chief"],
+    npcs: ["👴 Village Chief\nHe waits beside a table of worn village records."],
   },
 };
 
@@ -62,46 +56,35 @@ export class ArrivalScene extends Phaser.Scene {
   private renderPlace(): void {
     this.children.removeAll();
     const place = places[gameState.introduction.currentPlace];
-    renderLayout(
-      this,
-      gameState.knowledge.knowsVillage ? "Willow Village" : "Unknown",
-      place.name,
-      {
+    renderLayout(this, {
       nearbyPlaces: this.getNearbyPlaces(),
-      },
-    );
+    });
 
     this.add.text(columns.center, 60, place.name, {
       color: colors.primary,
       fontFamily: fonts.title,
-      fontSize: "25px",
+      fontSize: "29px",
     });
     this.add.text(columns.center, 102, place.description, {
-      color: colors.secondary,
+      color: colors.primary,
       fontFamily: fonts.body,
-      fontSize: "13px",
-      lineSpacing: 7,
+      fontSize: "15px",
+      lineSpacing: 10,
     });
 
-    addSectionTitle(this, columns.center, 176, "People Here");
-    this.add.text(
-      columns.center,
-      202,
-      place.npcs.length > 0 ? place.npcs.join("\n") : "No one is nearby.",
-      {
-        color: place.npcs.length > 0 ? colors.primary : colors.muted,
+    if (place.npcs.length > 0) {
+      this.add.text(columns.center, 210, place.npcs.join("\n"), {
+        color: colors.secondary,
         fontFamily: fonts.body,
         fontSize: "13px",
         lineSpacing: 6,
-      },
-    );
+      });
+    }
 
-    addSectionTitle(this, columns.center, 270, "What You Can Do");
     this.renderActions();
 
-    addSectionTitle(this, columns.center, 414, "What Happened");
-    this.add.text(columns.center, 440, this.message, {
-      color: colors.secondary,
+    this.add.text(columns.center, 438, this.message, {
+      color: colors.muted,
       fontFamily: fonts.body,
       fontSize: "12px",
       wordWrap: { width: 390 },

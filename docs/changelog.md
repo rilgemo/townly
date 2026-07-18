@@ -32,5 +32,7 @@ Notable project changes are recorded here.
 - Resource knowledge revealed through first collection.
 - Narrative-first panel language centered on You, Around You, and current experience.
 - Empty system-style sections hidden until they contain naturally known information.
+- Invisible-interface presentation with no panel borders or repeated place labels.
+- Scene descriptions promoted above secondary people, choices, and event text.
 - Lightweight roadmap, ideas, mechanics, and changelog documents.
 - GitHub Actions build workflow.

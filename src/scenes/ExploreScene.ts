@@ -10,7 +10,6 @@ import {
 } from "../systems/ExplorationSystem";
 import type { LocationId, ResourceId, ResourceReward } from "../types/game";
 import {
-  addSectionTitle,
   columns,
   createTextAction,
   renderLayout,
@@ -43,34 +42,25 @@ export class ExploreScene extends Phaser.Scene {
   private renderPlace(): void {
     this.children.removeAll();
     const location = locations[this.locationId];
-    renderLayout(this, "Surrounding Wilds", location.name, {
+    renderLayout(this, {
       nearbyPlaces: this.getNearbyPlaces(),
     });
 
     this.add.text(columns.center, 60, `${location.symbol} ${location.name}`, {
       color: colors.primary,
       fontFamily: fonts.title,
-      fontSize: "25px",
+      fontSize: "29px",
     });
     this.add.text(columns.center, 102, location.description, {
-      color: colors.secondary,
+      color: colors.primary,
       fontFamily: fonts.body,
-      fontSize: "13px",
+      fontSize: "15px",
     });
 
-    addSectionTitle(this, columns.center, 166, "People Here");
-    this.add.text(columns.center, 192, "No one is nearby.", {
-      color: colors.muted,
-      fontFamily: fonts.body,
-      fontSize: "13px",
-    });
-
-    addSectionTitle(this, columns.center, 236, "What You Can Do");
     this.renderActions();
 
-    addSectionTitle(this, columns.center, 390, "What Happened");
-    this.add.text(columns.center, 416, this.message, {
-      color: this.explorationActive ? colors.secondary : colors.success,
+    this.add.text(columns.center, 408, this.message, {
+      color: this.explorationActive ? colors.secondary : colors.muted,
       fontFamily: fonts.body,
       fontSize: "12px",
       wordWrap: { width: 390 },
@@ -86,10 +76,10 @@ export class ExploreScene extends Phaser.Scene {
       createTextAction(
         this,
         columns.center,
-        266,
+        228,
         this.explorationActive
           ? "Searching..."
-          : `${this.getSearchAction()} (${exploration.durationSeconds}s → ${reward})`,
+          : `${this.getSearchAction()} (${exploration.durationSeconds}s, ${reward})`,
         () => this.beginExploration(exploration),
         !this.explorationActive,
       );
@@ -97,14 +87,14 @@ export class ExploreScene extends Phaser.Scene {
       createTextAction(
         this,
         columns.center,
-        266,
+        228,
         "Nothing has been discovered here yet",
         () => undefined,
         false,
       );
     }
 
-    createTextAction(this, columns.center, 300, "Return to Town", () => {
+    createTextAction(this, columns.center, 270, "Walk back toward the village", () => {
       this.scene.start("town");
     });
   }

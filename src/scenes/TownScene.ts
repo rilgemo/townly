@@ -10,7 +10,6 @@ import {
 } from "../systems/TownUpgradeSystem";
 import type { LocationId } from "../types/game";
 import {
-  addSectionTitle,
   columns,
   createTextAction,
   renderLayout,
@@ -60,47 +59,44 @@ export class TownScene extends Phaser.Scene {
   private renderTown(): void {
     this.children.removeAll();
     const place = townPlaces[gameState.currentTownPlace];
-    renderLayout(this, gameState.knowledge.knowsVillage ? "Willow Village" : "Unknown", place.name, {
+    renderLayout(this, {
       nearbyPlaces: this.getNearbyPlaces(),
     });
 
     this.add.text(columns.center, 60, place.name, {
       color: colors.primary,
       fontFamily: fonts.title,
-      fontSize: "25px",
+      fontSize: "29px",
     });
     const placeDescription =
       gameState.currentTownPlace === "townHall"
         ? `${place.description}\nCondition: ${gameState.town.level >= 2 ? "Restored" : "Worn"}`
         : place.description;
     this.add.text(columns.center, 102, placeDescription, {
-      color: colors.secondary,
+      color: colors.primary,
       fontFamily: fonts.body,
-      fontSize: "13px",
-      lineSpacing: 7,
+      fontSize: "15px",
+      lineSpacing: 10,
     });
 
-    addSectionTitle(this, columns.center, 166, "People Here");
     place.npcIds.forEach((npcId, index) => {
       const npc = npcs[npcId];
-      this.add.text(columns.center, 192 + index * 24, `${npc.icon} ${npc.name}`, {
-        color: colors.primary,
+      this.add.text(columns.center, 210 + index * 36, `${npc.icon} ${npc.name}`, {
+        color: colors.secondary,
         fontFamily: fonts.body,
         fontSize: "13px",
       });
-      this.add.text(columns.center + 158, 192 + index * 24, npc.description, {
+      this.add.text(columns.center + 158, 210 + index * 36, npc.description, {
         color: colors.muted,
         fontFamily: fonts.body,
         fontSize: "11px",
       });
     });
 
-    addSectionTitle(this, columns.center, 252, "What You Can Do");
     this.renderActions();
 
-    addSectionTitle(this, columns.center, 454, "What Happened");
-    this.add.text(columns.center, 478, this.message, {
-      color: colors.secondary,
+    this.add.text(columns.center, 474, this.message, {
+      color: colors.muted,
       fontFamily: fonts.body,
       fontSize: "12px",
       wordWrap: { width: 390 },
@@ -123,8 +119,8 @@ export class TownScene extends Phaser.Scene {
       return;
     }
 
-    let actionY = 280;
-    createTextAction(this, columns.center, actionY, "Enter Town Hall", () => {
+    let actionY = 282;
+    createTextAction(this, columns.center, actionY, "Step into the Town Hall", () => {
       gameState.currentTownPlace = "townHall";
       this.message = "You enter the old Town Hall.";
       this.renderTown();
@@ -141,13 +137,13 @@ export class TownScene extends Phaser.Scene {
       return;
     }
 
-    createTextAction(this, columns.center, actionY, "Visit Village Edge", () => {
+    createTextAction(this, columns.center, actionY, "Walk to the village edge", () => {
       gameState.currentTownPlace = "villageEdge";
       this.message = "You walk toward the cottages at the village edge.";
       this.renderTown();
     });
     actionY += 26;
-    createTextAction(this, columns.center, actionY, "Visit Old Mine Entrance", () => {
+    createTextAction(this, columns.center, actionY, "Follow the road to the old mine", () => {
       gameState.currentTownPlace = "mineEntrance";
       this.message = "You follow the worn road toward the old mine.";
       this.renderTown();
@@ -198,7 +194,7 @@ export class TownScene extends Phaser.Scene {
       );
     }
 
-    createTextAction(this, columns.center, 350, "Return to Town Square", () => {
+    createTextAction(this, columns.center, 350, "Step outside to the Town Square", () => {
       gameState.currentTownPlace = "townSquare";
       this.message = "You step back into the Town Square.";
       this.renderTown();
@@ -224,7 +220,7 @@ export class TownScene extends Phaser.Scene {
       this.createTravelAction("forest", 306);
     }
 
-    createTextAction(this, columns.center, 340, "Return to Town Square", () => {
+    createTextAction(this, columns.center, 340, "Walk back to the Town Square", () => {
       gameState.currentTownPlace = "townSquare";
       this.message = "You return to the center of the village.";
       this.renderTown();
@@ -250,7 +246,7 @@ export class TownScene extends Phaser.Scene {
       this.createTravelAction("mine", 306);
     }
 
-    createTextAction(this, columns.center, 340, "Return to Town Square", () => {
+    createTextAction(this, columns.center, 340, "Walk back to the Town Square", () => {
       gameState.currentTownPlace = "townSquare";
       this.message = "You return to the center of the village.";
       this.renderTown();
@@ -263,7 +259,7 @@ export class TownScene extends Phaser.Scene {
       this,
       columns.center,
       y,
-      `Go to ${location.symbol} ${location.name}`,
+      `Head toward ${location.symbol} ${location.name}`,
       () => this.scene.start("explore", { locationId }),
     );
   }

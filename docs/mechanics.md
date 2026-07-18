@@ -32,6 +32,7 @@ This document records gameplay rules that are implemented or approved for implem
 - Looking around reveals local possibilities; the Village Guard reveals the name Willow Village.
 - A resource first appears in the player panel after it has been collected.
 - Interface language describes the player's experience rather than exposing RPG system categories.
+- Empty interface regions remain empty; no placeholder content is shown solely to fill the layout.
 
 ## Design Principle
 
