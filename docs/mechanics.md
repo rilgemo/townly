@@ -25,8 +25,9 @@ This document records gameplay rules that are implemented or approved for implem
 - A new player arrives outside the village, meets the Village Guard, and is admitted through the gate.
 - The Village Chief provides temporary shelter and introduces basic gathering work.
 - The arrival sequence advances through places and contextual NPC actions rather than a linear dialogue chain.
-- Forest access begins locked and is opened by speaking with the Lumberjack at the Village Edge.
-- Mine access begins locked and is opened by speaking with the Miner at the Old Mine Entrance.
+- The player recognizes the old Forest path by examining it at the Village Edge.
+- The player finds a remaining Mine passage by examining the abandoned entrance.
+- The Old Woodsman and Former Miner explain what these places once meant to Willow Village; they do not grant access.
 - Buildings are presented as places; Town Hall condition and upgrade actions appear only while inside it.
 - Village name, nearby places, resource names, and travel actions appear only after the player learns or observes them.
 - Looking around reveals local possibilities; the Village Guard reveals the name Willow Village.

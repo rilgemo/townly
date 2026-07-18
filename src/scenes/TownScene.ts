@@ -41,12 +41,12 @@ const townPlaces: Record<typeof gameState.currentTownPlace, TownPlace> = {
   villageEdge: {
     name: "Village Edge",
     description: "The last cottages stand beside a wall of tangled growth.\nAn old path disappears beneath the trees.",
-    npcIds: ["lumberjack"],
+    npcIds: ["woodsman"],
   },
   mineEntrance: {
     name: "Old Mine Entrance",
     description: "Broken timbers and fallen stone cover the mine entrance.\nA small worker's hut stands beside the blocked tunnel.",
-    npcIds: ["miner"],
+    npcIds: ["formerMiner"],
   },
 };
 
@@ -110,12 +110,12 @@ export class TownScene extends Phaser.Scene {
 
   private renderActions(): void {
     if (gameState.currentTownPlace === "villageEdge") {
-      this.renderLumberjackActions();
+      this.renderWoodsmanActions();
       return;
     }
 
     if (gameState.currentTownPlace === "mineEntrance") {
-      this.renderMinerActions();
+      this.renderFormerMinerActions();
       return;
     }
 
@@ -235,52 +235,68 @@ export class TownScene extends Phaser.Scene {
     });
   }
 
-  private renderLumberjackActions(): void {
-    if (!gameState.villagePeople.lumberjackMet) {
-      createTextAction(this, columns.center, 280, "Speak with 🪓 Lumberjack", () => {
-        gameState.villagePeople.lumberjackMet = true;
+  private renderWoodsmanActions(): void {
+    let actionY = 280;
+
+    if (!gameState.knowledge.knowsForest) {
+      createTextAction(this, columns.center, actionY, "Study the overgrown forest path", () => {
         gameState.knowledge.knowsForest = true;
-        this.unlockLocation("forest");
+        this.addKnownLocation("forest");
         this.message =
-          'Lumberjack: "The forest path is badly overgrown. I cleared enough for you to pass." Forest unlocked.';
+          "Beneath weeds and fallen branches, an old working path still leads into the forest.";
         this.renderTown();
       });
-    } else {
-      createTextAction(this, columns.center, 280, "Speak with 🪓 Lumberjack", () => {
-        this.message =
-          'Lumberjack: "The path is open. You should find useful material beneath the trees."';
-        this.renderTown();
-      });
-      this.createTravelAction("forest", 306);
+      actionY += 28;
     }
 
-    createTextAction(this, columns.center, 340, "Walk back to the Town Square", () => {
+    createTextAction(this, columns.center, actionY, "Speak with 🪓 Old Woodsman", () => {
+      gameState.villagePeople.woodsmanMet = true;
+      this.message =
+        'Old Woodsman: "That forest once kept every hearth warm. When the village weakened, the path was left to disappear. It still remembers the way, even if we do not."';
+      this.renderTown();
+    });
+    actionY += 28;
+
+    if (gameState.knowledge.knowsForest) {
+      this.createTravelAction("forest", actionY);
+      actionY += 28;
+    }
+
+    createTextAction(this, columns.center, actionY, "Walk back to the Town Square", () => {
       gameState.currentTownPlace = "townSquare";
       this.message = "You return to the center of the village.";
       this.renderTown();
     });
   }
 
-  private renderMinerActions(): void {
-    if (!gameState.villagePeople.minerMet) {
-      createTextAction(this, columns.center, 280, "Speak with ⛏ Miner", () => {
-        gameState.villagePeople.minerMet = true;
+  private renderFormerMinerActions(): void {
+    let actionY = 280;
+
+    if (!gameState.knowledge.knowsMine) {
+      createTextAction(this, columns.center, actionY, "Examine the abandoned mine", () => {
         gameState.knowledge.knowsMine = true;
-        this.unlockLocation("mine");
+        this.addKnownLocation("mine");
         this.message =
-          'Miner: "The main entrance is blocked, but I opened a narrow side passage." Mine unlocked.';
+          "The main entrance has collapsed, but a narrow service passage remains between the stones.";
         this.renderTown();
       });
-    } else {
-      createTextAction(this, columns.center, 280, "Speak with ⛏ Miner", () => {
-        this.message =
-          'Miner: "The side passage is stable enough. There may be useful material inside."';
-        this.renderTown();
-      });
-      this.createTravelAction("mine", 306);
+      actionY += 28;
     }
 
-    createTextAction(this, columns.center, 340, "Walk back to the Town Square", () => {
+    createTextAction(this, columns.center, actionY, "Speak with ⛏ Former Miner", () => {
+      gameState.villagePeople.formerMinerMet = true;
+      this.message =
+        'Former Miner: "Stone from these tunnels built half the village. After the collapse, there were too few of us to clear them. The old passages are still down there."';
+      this.renderTown();
+    });
+    actionY += 28;
+
+    if (gameState.knowledge.knowsMine) {
+      this.createTravelAction("mine", actionY);
+      actionY += 28;
+    }
+
+    createTextAction(this, columns.center, actionY, "Walk back to the Town Square", () => {
       gameState.currentTownPlace = "townSquare";
       this.message = "You return to the center of the village.";
       this.renderTown();
@@ -298,7 +314,7 @@ export class TownScene extends Phaser.Scene {
     );
   }
 
-  private unlockLocation(locationId: LocationId): void {
+  private addKnownLocation(locationId: LocationId): void {
     if (!gameState.discoveredLocations.includes(locationId)) {
       gameState.discoveredLocations.push(locationId);
     }
@@ -312,12 +328,12 @@ export class TownScene extends Phaser.Scene {
       return ["Town Square"];
     }
     if (gameState.currentTownPlace === "villageEdge") {
-      return gameState.villagePeople.lumberjackMet
+      return gameState.knowledge.knowsForest
         ? ["Town Square", "Forest"]
         : ["Town Square", "Overgrown path"];
     }
     if (gameState.currentTownPlace === "mineEntrance") {
-      return gameState.villagePeople.minerMet
+      return gameState.knowledge.knowsMine
         ? ["Town Square", "Mine"]
         : ["Town Square", "Blocked tunnel"];
     }
@@ -338,8 +354,8 @@ export class TownScene extends Phaser.Scene {
 
   private getGuardMessage(): string {
     if (
-      gameState.villagePeople.lumberjackMet ||
-      gameState.villagePeople.minerMet
+      gameState.villagePeople.woodsmanMet ||
+      gameState.villagePeople.formerMinerMet
     ) {
       return 'Village Guard: "You are finding your way around. Good. People have started to recognize you."';
     }
@@ -354,10 +370,10 @@ export class TownScene extends Phaser.Scene {
       return 'Village Chief: "You have learned paths even some of us had forgotten. Willow Village is fortunate you stayed."';
     }
     if (
-      gameState.villagePeople.lumberjackMet &&
-      gameState.villagePeople.minerMet
+      gameState.villagePeople.woodsmanMet &&
+      gameState.villagePeople.formerMinerMet
     ) {
-      return 'Village Chief: "I hear you have spoken with our workers. You are no longer moving through the village like a stranger."';
+      return 'Village Chief: "I hear you have spoken with those who remember the old forest and mine. You are beginning to understand what this village once was."';
     }
     return 'Village Chief: "I hope the room has been comfortable enough. You are welcome here while you find your place."';
   }

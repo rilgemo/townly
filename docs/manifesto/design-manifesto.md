@@ -124,6 +124,8 @@ A weathered gate stands ahead.
 
 NPC 不是 Quest Giver，也不是 Unlock Button。
 
+NPC 是村庄过去的见证者。他们记得失去的道路、工作与生活，但不会替玩家按下进度开关。
+
 他们应该像真正住在这里的人。
 
 玩家回来时，守卫仍然在那里，樵夫今天又在砍树，矿工仍然担心矿坑。

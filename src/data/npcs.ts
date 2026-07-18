@@ -1,4 +1,4 @@
-export type NpcId = "guard" | "chief" | "lumberjack" | "miner";
+export type NpcId = "guard" | "chief" | "woodsman" | "formerMiner";
 
 export interface Npc {
   id: NpcId;
@@ -20,16 +20,16 @@ export const npcs: Record<NpcId, Npc> = {
     name: "Village Chief",
     description: "Maintains the village and its old records.",
   },
-  lumberjack: {
-    id: "lumberjack",
+  woodsman: {
+    id: "woodsman",
     icon: "🪓",
-    name: "Lumberjack",
-    description: "Works near the village edge and knows the forest paths.",
+    name: "Old Woodsman",
+    description: "Remembers when the forest path still sustained the village.",
   },
-  miner: {
-    id: "miner",
+  formerMiner: {
+    id: "formerMiner",
     icon: "⛏",
-    name: "Miner",
-    description: "Lives near the blocked entrance to the old mine.",
+    name: "Former Miner",
+    description: "Keeps watch near tunnels abandoned years ago.",
   },
 };

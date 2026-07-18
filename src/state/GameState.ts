@@ -14,8 +14,8 @@ export interface GameState {
     | "villageEdge"
     | "mineEntrance";
   villagePeople: {
-    lumberjackMet: boolean;
-    minerMet: boolean;
+    woodsmanMet: boolean;
+    formerMinerMet: boolean;
   };
   knowledge: {
     knowsVillage: boolean;
@@ -50,8 +50,8 @@ export const gameState: GameState = {
   explorationCounts: {},
   currentTownPlace: "townSquare",
   villagePeople: {
-    lumberjackMet: false,
-    minerMet: false,
+    woodsmanMet: false,
+    formerMinerMet: false,
   },
   knowledge: {
     knowsVillage: false,

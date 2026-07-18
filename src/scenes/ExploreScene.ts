@@ -135,7 +135,7 @@ export class ExploreScene extends Phaser.Scene {
     if (discoveredLocation) {
       lines.push(
         "You discovered a hidden path.",
-        `New location unlocked: ${locations[discoveredLocation].name}`,
+        `The hidden path now feels familiar: ${locations[discoveredLocation].name}`,
       );
     }
     return lines.join("\n");
