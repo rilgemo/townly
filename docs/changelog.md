@@ -6,6 +6,7 @@ Notable project changes are recorded here.
 
 ### Added
 
+- Townly Design Manifesto v0.1 as the reference for future product decisions.
 - Initial Phaser, Vite, and TypeScript project structure.
 - Starter town scene.
 - Clickable travel from Town to Forest, Mine, Plains, and Lake.

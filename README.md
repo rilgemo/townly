@@ -1,6 +1,14 @@
 # Townly
 
+> **Townly is not about building a village.**
+>
+> **It is about slowly discovering that the village was waiting for you all along.**
+
 A small idle RPG about growing a town through exploration.
+
+## Design Direction
+
+All features and interface changes should be evaluated against the [Townly Design Manifesto](docs/design-manifesto.md).
 
 ## Status
 
