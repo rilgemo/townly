@@ -15,6 +15,9 @@ Notable project changes are recorded here.
 - State-based Guard and Village Chief recognition without relationship systems.
 - Restoration Foundations reframing the Old Woodsman and Former Miner as witnesses of village history.
 - Player-observed Forest and Mine access independent of NPC permission.
+- Spatial Identity milestone with Town Square as a four-direction village center.
+- Separate people, local actions, and directional travel presentation.
+- Deep Forest reached through Forest rather than a global location list.
 - Initial Phaser, Vite, and TypeScript project structure.
 - Starter town scene.
 - Clickable travel from Town to Forest, Mine, Plains, and Lake.

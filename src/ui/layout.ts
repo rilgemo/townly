@@ -142,6 +142,12 @@ function getKnownKnowledge(): string[] {
   if (gameState.knowledge.knowsMine) {
     knowledge.push("Mine side passage");
   }
+  if (gameState.knowledge.knowsLake) {
+    knowledge.push("Western lakeshore");
+  }
+  if (gameState.knowledge.knowsPlains) {
+    knowledge.push("Road to the southern plains");
+  }
   if (gameState.discoveredLocations.includes("deepForest")) {
     knowledge.push("Hidden forest path");
   }

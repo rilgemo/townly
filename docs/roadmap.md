@@ -22,6 +22,14 @@
 - [x] Reframe residents as witnesses and guides rather than progression switches.
 - [x] Connect gathered materials to bringing old village places back.
 
+## Spatial Identity
+
+- [x] Establish Town Square as Willow Village's center.
+- [x] Restore north, east, south, and west movement.
+- [x] Reveal destination names through observation and travel.
+- [x] Separate people, local actions, and travel.
+- [x] Connect Deep Forest spatially through Forest.
+
 ## Prototype
 
 - [x] Establish the location navigation loop.

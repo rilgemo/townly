@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 
-import { locations } from "../data/locations";
 import { npcs, type NpcId } from "../data/npcs";
 import { gameState } from "../state/GameState";
 import {
@@ -9,11 +8,7 @@ import {
   upgradeTownHall,
 } from "../systems/TownUpgradeSystem";
 import type { LocationId } from "../types/game";
-import {
-  columns,
-  createTextAction,
-  renderLayout,
-} from "../ui/layout";
+import { columns, createTextAction, renderLayout } from "../ui/layout";
 import { colors, fonts } from "../ui/theme";
 
 interface TownPlace {
@@ -25,12 +20,12 @@ interface TownPlace {
 const townPlaces: Record<typeof gameState.currentTownPlace, TownPlace> = {
   townSquare: {
     name: "Town Square",
-    description: "A small settlement slowly comes alive. Paths lead toward\nthe village edge and the old mine road.",
+    description: "Willow Village gathers around this worn stone square.\nPaths leave between old buildings in every direction.",
     npcIds: ["guard"],
   },
   townHall: {
     name: "Town Hall",
-    description: "The hall contains the village records and a long communal table.\nIts worn structure reflects the condition of the town.",
+    description: "The hall contains village records and a long communal table.\nIts worn structure reflects the condition of the village.",
     npcIds: ["chief"],
   },
   shelter: {
@@ -40,18 +35,23 @@ const townPlaces: Record<typeof gameState.currentTownPlace, TownPlace> = {
   },
   villageEdge: {
     name: "Village Edge",
-    description: "The last cottages stand beside a wall of tangled growth.\nAn old path disappears beneath the trees.",
+    description: "The northern cottages stand beside a wall of tangled growth.\nAn old working path disappears beneath the trees.",
     npcIds: ["woodsman"],
   },
   mineEntrance: {
     name: "Old Mine Entrance",
-    description: "Broken timbers and fallen stone cover the mine entrance.\nA small worker's hut stands beside the blocked tunnel.",
+    description: "East of the square, broken timbers and fallen stone cover a tunnel.\nA small worker's hut remains beside the hillside.",
     npcIds: ["formerMiner"],
+  },
+  southRoad: {
+    name: "The Old Road",
+    description: "The road where you first arrived continues beyond the southern gate.\nWillow Village rests behind you; open country lies ahead.",
+    npcIds: [],
   },
 };
 
 export class TownScene extends Phaser.Scene {
-  private message = "The town waits for your next decision.";
+  private message = "The village moves quietly around you.";
 
   constructor() {
     super("town");
@@ -64,43 +64,29 @@ export class TownScene extends Phaser.Scene {
   private renderTown(): void {
     this.children.removeAll();
     const place = townPlaces[gameState.currentTownPlace];
-    renderLayout(this, {
-      nearbyPlaces: this.getNearbyPlaces(),
-    });
+    renderLayout(this);
 
-    this.add.text(columns.center, 60, place.name, {
+    this.add.text(columns.center, 46, place.name, {
       color: colors.primary,
       fontFamily: fonts.title,
       fontSize: "29px",
     });
-    const placeDescription =
+    const description =
       gameState.currentTownPlace === "townHall"
         ? `${place.description}\nCondition: ${gameState.town.level >= 2 ? "Restored" : "Worn"}`
         : place.description;
-    this.add.text(columns.center, 102, placeDescription, {
+    this.add.text(columns.center, 92, description, {
       color: colors.primary,
       fontFamily: fonts.body,
       fontSize: "15px",
       lineSpacing: 10,
     });
 
-    place.npcIds.forEach((npcId, index) => {
-      const npc = npcs[npcId];
-      this.add.text(columns.center, 210 + index * 36, `${npc.icon} ${npc.name}`, {
-        color: colors.secondary,
-        fontFamily: fonts.body,
-        fontSize: "13px",
-      });
-      this.add.text(columns.center + 158, 210 + index * 36, npc.description, {
-        color: colors.muted,
-        fontFamily: fonts.body,
-        fontSize: "11px",
-      });
-    });
+    this.renderPeople(place.npcIds);
+    this.renderPlaceActions();
+    this.renderTravel();
 
-    this.renderActions();
-
-    this.add.text(columns.center, 474, this.message, {
+    this.add.text(columns.center, 502, this.message, {
       color: colors.muted,
       fontFamily: fonts.body,
       fontSize: "12px",
@@ -108,210 +94,230 @@ export class TownScene extends Phaser.Scene {
     });
   }
 
-  private renderActions(): void {
-    if (gameState.currentTownPlace === "villageEdge") {
-      this.renderWoodsmanActions();
-      return;
-    }
-
-    if (gameState.currentTownPlace === "mineEntrance") {
-      this.renderFormerMinerActions();
-      return;
-    }
-
-    if (gameState.currentTownPlace === "townHall") {
-      this.renderTownHallActions();
-      return;
-    }
-
-    if (gameState.currentTownPlace === "shelter") {
-      this.renderShelterActions();
-      return;
-    }
-
-    let actionY = 270;
-    createTextAction(this, columns.center, actionY, "Speak with the Village Guard", () => {
-      this.message = this.getGuardMessage();
-      this.renderTown();
+  private renderPeople(npcIds: NpcId[]): void {
+    npcIds.forEach((npcId, index) => {
+      const npc = npcs[npcId];
+      const y = 178 + index * 52;
+      this.add.text(columns.center, y, `${npc.icon} ${npc.name}`, {
+        color: colors.secondary,
+        fontFamily: fonts.body,
+        fontSize: "13px",
+      });
+      this.add.text(columns.center + 158, y, npc.description, {
+        color: colors.muted,
+        fontFamily: fonts.body,
+        fontSize: "11px",
+      });
+      createTextAction(this, columns.center, y + 24, `Speak with ${npc.name}`, () => {
+        this.speakWith(npcId);
+      });
     });
-    actionY += 24;
-    createTextAction(this, columns.center, actionY, "Return to your shelter", () => {
-      gameState.currentTownPlace = "shelter";
-      this.message = "You leave the square and return to the room offered to you.";
-      this.renderTown();
-    });
-    actionY += 24;
-    createTextAction(this, columns.center, actionY, "Step into the Town Hall", () => {
-      gameState.currentTownPlace = "townHall";
-      this.message = "You enter the old Town Hall.";
-      this.renderTown();
-    });
-    actionY += 24;
+  }
 
-    if (!gameState.knowledge.surveyedVillage) {
-      createTextAction(this, columns.center, actionY, "Look around Town Square", () => {
-        gameState.knowledge.surveyedVillage = true;
-        this.message =
-          "You notice cottages near the village edge and an old road leading toward a blocked mine.";
+  private renderPlaceActions(): void {
+    const y = 270;
+
+    if (gameState.currentTownPlace === "townSquare") {
+      if (!gameState.knowledge.surveyedVillage) {
+        createTextAction(this, columns.center, y, "Look around the square", () => {
+          gameState.knowledge.surveyedVillage = true;
+          this.message =
+            "Trees crowd the north. A hill road runs east. Water glints west. The old gate opens south.";
+          this.renderTown();
+        });
+      }
+      createTextAction(this, columns.center, y + 28, "Step into the Town Hall", () => {
+        gameState.currentTownPlace = "townHall";
+        this.message = "You enter the old Town Hall.";
+        this.renderTown();
+      });
+      createTextAction(this, columns.center, y + 56, "Return to your shelter", () => {
+        gameState.currentTownPlace = "shelter";
+        this.message = "You return to the room offered to you.";
         this.renderTown();
       });
       return;
     }
 
-    createTextAction(this, columns.center, actionY, "Walk to the village edge", () => {
-      gameState.currentTownPlace = "villageEdge";
-      this.message = "You walk toward the cottages at the village edge.";
-      this.renderTown();
-    });
-    actionY += 24;
-    createTextAction(this, columns.center, actionY, "Follow the road to the old mine", () => {
-      gameState.currentTownPlace = "mineEntrance";
-      this.message = "You follow the worn road toward the old mine.";
-      this.renderTown();
-    });
-    actionY += 24;
-
-    for (const locationId of gameState.discoveredLocations) {
-      if (locationId === "town") {
-        continue;
-      }
-      if (locationId === "forest" || locationId === "mine") {
-        continue;
-      }
-      this.createTravelAction(locationId, actionY);
-      actionY += 24;
+    if (gameState.currentTownPlace === "townHall") {
+      this.renderTownHallAction(y);
+      return;
     }
 
-  }
-
-  private renderTownHallActions(): void {
-    createTextAction(this, columns.center, 280, "Speak with 👴 Village Chief", () => {
-      this.message = this.getChiefMessage();
-      this.renderTown();
-    });
-
-    if (gameState.town.level === 1) {
-      const woodCost = townHallUpgradeCost.wood ?? 0;
-      const stoneCost = townHallUpgradeCost.stone ?? 0;
-      const affordable = canUpgradeTownHall();
-      const knowsRequirements =
-        gameState.knowledge.knowsWood && gameState.knowledge.knowsStone;
-      createTextAction(
-        this,
-        columns.center,
-        312,
-        !knowsRequirements
-          ? "Repair requirements are not understood yet"
-          : affordable
-          ? `Repair Town Hall (${woodCost} Wood, ${stoneCost} Stone)`
-          : `Town Hall repair requires ${woodCost} Wood, ${stoneCost} Stone`,
-        () => {
-          if (upgradeTownHall()) {
-            this.message = "The Town Hall has been restored. Town Level increased.";
-            this.renderTown();
-          }
-        },
-        knowsRequirements && affordable,
-      );
+    if (gameState.currentTownPlace === "shelter") {
+      createTextAction(this, columns.center, y, "Sit quietly for a while", () => {
+        this.message =
+          "The room is still unfamiliar, but village sounds carry through the window.";
+        this.renderTown();
+      });
+      return;
     }
 
-    createTextAction(this, columns.center, 350, "Step outside to the Town Square", () => {
-      gameState.currentTownPlace = "townSquare";
-      this.message = "You step back into the Town Square.";
-      this.renderTown();
-    });
-  }
-
-  private renderShelterActions(): void {
-    createTextAction(this, columns.center, 282, "Sit quietly for a while", () => {
-      this.message =
-        "The room is still unfamiliar, but the sounds of the village carry through the window.";
-      this.renderTown();
-    });
-    createTextAction(this, columns.center, 316, "Step outside to the Town Square", () => {
-      gameState.currentTownPlace = "townSquare";
-      this.message = "You close the shelter door behind you and return to the square.";
-      this.renderTown();
-    });
-  }
-
-  private renderWoodsmanActions(): void {
-    let actionY = 280;
-
-    if (!gameState.knowledge.knowsForest) {
-      createTextAction(this, columns.center, actionY, "Study the overgrown forest path", () => {
+    if (gameState.currentTownPlace === "villageEdge" && !gameState.knowledge.knowsForest) {
+      createTextAction(this, columns.center, y, "Study the overgrown path", () => {
         gameState.knowledge.knowsForest = true;
         this.addKnownLocation("forest");
         this.message =
           "Beneath weeds and fallen branches, an old working path still leads into the forest.";
         this.renderTown();
       });
-      actionY += 28;
+      return;
     }
 
-    createTextAction(this, columns.center, actionY, "Speak with 🪓 Old Woodsman", () => {
-      gameState.villagePeople.woodsmanMet = true;
-      this.message =
-        'Old Woodsman: "That forest once kept every hearth warm. When the village weakened, the path was left to disappear. It still remembers the way, even if we do not."';
-      this.renderTown();
-    });
-    actionY += 28;
-
-    if (gameState.knowledge.knowsForest) {
-      this.createTravelAction("forest", actionY);
-      actionY += 28;
-    }
-
-    createTextAction(this, columns.center, actionY, "Walk back to the Town Square", () => {
-      gameState.currentTownPlace = "townSquare";
-      this.message = "You return to the center of the village.";
-      this.renderTown();
-    });
-  }
-
-  private renderFormerMinerActions(): void {
-    let actionY = 280;
-
-    if (!gameState.knowledge.knowsMine) {
-      createTextAction(this, columns.center, actionY, "Examine the abandoned mine", () => {
+    if (gameState.currentTownPlace === "mineEntrance" && !gameState.knowledge.knowsMine) {
+      createTextAction(this, columns.center, y, "Examine the collapsed entrance", () => {
         gameState.knowledge.knowsMine = true;
         this.addKnownLocation("mine");
         this.message =
-          "The main entrance has collapsed, but a narrow service passage remains between the stones.";
+          "The main entrance is lost, but a narrow service passage remains between the stones.";
         this.renderTown();
       });
-      actionY += 28;
+      return;
     }
 
-    createTextAction(this, columns.center, actionY, "Speak with ⛏ Former Miner", () => {
-      gameState.villagePeople.formerMinerMet = true;
-      this.message =
-        'Former Miner: "Stone from these tunnels built half the village. After the collapse, there were too few of us to clear them. The old passages are still down there."';
-      this.renderTown();
-    });
-    actionY += 28;
-
-    if (gameState.knowledge.knowsMine) {
-      this.createTravelAction("mine", actionY);
-      actionY += 28;
+    if (gameState.currentTownPlace === "southRoad") {
+      createTextAction(this, columns.center, y, "Look beyond the village", () => {
+        this.message =
+          "The road crosses open land before fading toward the distant southern horizon.";
+        this.renderTown();
+      });
     }
-
-    createTextAction(this, columns.center, actionY, "Walk back to the Town Square", () => {
-      gameState.currentTownPlace = "townSquare";
-      this.message = "You return to the center of the village.";
-      this.renderTown();
-    });
   }
 
-  private createTravelAction(locationId: LocationId, y: number): void {
-    const location = locations[locationId];
+  private renderTownHallAction(y: number): void {
+    if (gameState.town.level >= 2) {
+      return;
+    }
+
+    const woodCost = townHallUpgradeCost.wood ?? 0;
+    const stoneCost = townHallUpgradeCost.stone ?? 0;
+    const knowsRequirements =
+      gameState.knowledge.knowsWood && gameState.knowledge.knowsStone;
+    const affordable = canUpgradeTownHall();
     createTextAction(
       this,
       columns.center,
       y,
-      `Head toward ${location.symbol} ${location.name}`,
-      () => this.scene.start("explore", { locationId }),
+      !knowsRequirements
+        ? "Examine what the hall needs"
+        : affordable
+          ? `Repair the hall (${woodCost} Wood, ${stoneCost} Stone)`
+          : `The hall still needs ${woodCost} Wood and ${stoneCost} Stone`,
+      () => {
+        if (upgradeTownHall()) {
+          this.message = "The old hall stands firm again. Voices linger inside longer than before.";
+          this.renderTown();
+        }
+      },
+      knowsRequirements && affordable,
     );
+  }
+
+  private renderTravel(): void {
+    const y = 370;
+    this.add.text(columns.center, y - 24, "WAYS FROM HERE", {
+      color: colors.muted,
+      fontFamily: fonts.body,
+      fontSize: "10px",
+    });
+
+    if (gameState.currentTownPlace === "townSquare") {
+      createTextAction(
+        this,
+        columns.center,
+        y,
+        gameState.knowledge.knowsForest ? "Walk north to the forest path" : "Walk north",
+        () => this.moveWithinVillage("villageEdge", "You follow the northern path between the cottages."),
+      );
+      createTextAction(
+        this,
+        columns.center,
+        y + 26,
+        gameState.knowledge.knowsMine ? "Walk east toward the old mine" : "Walk east",
+        () => this.moveWithinVillage("mineEntrance", "You follow the eastern road toward the hills."),
+      );
+      createTextAction(
+        this,
+        columns.center,
+        y + 52,
+        gameState.knowledge.knowsLake ? "Walk west toward the lake" : "Walk west",
+        () => {
+          gameState.knowledge.knowsLake = true;
+          this.scene.start("explore", { locationId: "lake" });
+        },
+      );
+      createTextAction(this, columns.center, y + 78, "Walk south to the old road", () => {
+        this.moveWithinVillage("southRoad", "You pass through the southern gate to the old road.");
+      });
+      return;
+    }
+
+    if (gameState.currentTownPlace === "villageEdge") {
+      if (gameState.knowledge.knowsForest) {
+        this.createTravelAction("forest", y, "Continue north into the forest");
+      }
+      createTextAction(this, columns.center, y + 30, "Walk south to the Town Square", () => {
+        this.moveWithinVillage("townSquare", "You walk back toward the center of Willow Village.");
+      });
+      return;
+    }
+
+    if (gameState.currentTownPlace === "mineEntrance") {
+      if (gameState.knowledge.knowsMine) {
+        this.createTravelAction("mine", y, "Enter the remaining mine passage");
+      }
+      createTextAction(this, columns.center, y + 30, "Walk west to the Town Square", () => {
+        this.moveWithinVillage("townSquare", "You follow the hill road back to the square.");
+      });
+      return;
+    }
+
+    if (gameState.currentTownPlace === "southRoad") {
+      createTextAction(this, columns.center, y, "Walk north into Willow Village", () => {
+        this.moveWithinVillage("townSquare", "You pass through the gate and return to the square.");
+      });
+      createTextAction(this, columns.center, y + 30, "Continue south along the road", () => {
+        gameState.knowledge.knowsPlains = true;
+        this.scene.start("explore", { locationId: "plains" });
+      });
+      return;
+    }
+
+    createTextAction(this, columns.center, y, "Step outside to the Town Square", () => {
+      this.moveWithinVillage("townSquare", "You return to the Town Square.");
+    });
+  }
+
+  private speakWith(npcId: NpcId): void {
+    if (npcId === "guard") {
+      this.message = this.getGuardMessage();
+    } else if (npcId === "chief") {
+      this.message = this.getChiefMessage();
+    } else if (npcId === "woodsman") {
+      gameState.villagePeople.woodsmanMet = true;
+      this.message =
+        'Old Woodsman: "That forest once kept every hearth warm. When the village weakened, the path was left to disappear."';
+    } else {
+      gameState.villagePeople.formerMinerMet = true;
+      this.message =
+        'Former Miner: "Stone from these tunnels built half the village. After the collapse, there were too few of us to clear them."';
+    }
+    this.renderTown();
+  }
+
+  private createTravelAction(locationId: LocationId, y: number, label: string): void {
+    createTextAction(this, columns.center, y, label, () => {
+      this.scene.start("explore", { locationId });
+    });
+  }
+
+  private moveWithinVillage(
+    place: typeof gameState.currentTownPlace,
+    message: string,
+  ): void {
+    gameState.currentTownPlace = place;
+    this.message = message;
+    this.renderTown();
   }
 
   private addKnownLocation(locationId: LocationId): void {
@@ -320,44 +326,9 @@ export class TownScene extends Phaser.Scene {
     }
   }
 
-  private getNearbyPlaces(): string[] {
-    if (gameState.currentTownPlace === "townHall") {
-      return ["Town Square"];
-    }
-    if (gameState.currentTownPlace === "shelter") {
-      return ["Town Square"];
-    }
-    if (gameState.currentTownPlace === "villageEdge") {
-      return gameState.knowledge.knowsForest
-        ? ["Town Square", "Forest"]
-        : ["Town Square", "Overgrown path"];
-    }
-    if (gameState.currentTownPlace === "mineEntrance") {
-      return gameState.knowledge.knowsMine
-        ? ["Town Square", "Mine"]
-        : ["Town Square", "Blocked tunnel"];
-    }
-
-    if (!gameState.knowledge.surveyedVillage) {
-      return ["Your Shelter", "Town Hall"];
-    }
-
-    const knownPlaces = ["Your Shelter", "Town Hall", "Village Edge", "Old Mine Entrance"];
-    if (gameState.discoveredLocations.includes("plains")) {
-      knownPlaces.push("Plains");
-    }
-    if (gameState.discoveredLocations.includes("lake")) {
-      knownPlaces.push("Lake");
-    }
-    return knownPlaces;
-  }
-
   private getGuardMessage(): string {
-    if (
-      gameState.villagePeople.woodsmanMet ||
-      gameState.villagePeople.formerMinerMet
-    ) {
-      return 'Village Guard: "You are finding your way around. Good. People have started to recognize you."';
+    if (gameState.villagePeople.woodsmanMet || gameState.villagePeople.formerMinerMet) {
+      return 'Village Guard: "You are finding your way around. People have started to recognize you."';
     }
     return 'Village Guard: "Settling in? The room near the square should keep the rain out."';
   }
@@ -369,11 +340,8 @@ export class TownScene extends Phaser.Scene {
     if (gameState.discoveredLocations.includes("deepForest")) {
       return 'Village Chief: "You have learned paths even some of us had forgotten. Willow Village is fortunate you stayed."';
     }
-    if (
-      gameState.villagePeople.woodsmanMet &&
-      gameState.villagePeople.formerMinerMet
-    ) {
-      return 'Village Chief: "I hear you have spoken with those who remember the old forest and mine. You are beginning to understand what this village once was."';
+    if (gameState.villagePeople.woodsmanMet && gameState.villagePeople.formerMinerMet) {
+      return 'Village Chief: "You are beginning to understand what this village once was."';
     }
     return 'Village Chief: "I hope the room has been comfortable enough. You are welcome here while you find your place."';
   }

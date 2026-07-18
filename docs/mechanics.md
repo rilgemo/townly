@@ -34,6 +34,9 @@ This document records gameplay rules that are implemented or approved for implem
 - A resource first appears in the player panel after it has been collected.
 - Interface language describes the player's experience rather than exposing RPG system categories.
 - Empty interface regions remain empty; no placeholder content is shown solely to fill the layout.
+- Town Square is Willow Village's spatial center, with north, east, south, and west travel choices.
+- Direction labels reveal known destinations only after the player has observed them.
+- People, local actions, and travel are presented as separate kinds of interaction.
 
 ## Design Principle
 

@@ -71,6 +71,13 @@ export class ExploreScene extends Phaser.Scene {
   private renderActions(): void {
     const exploration = getExploration(this.locationId);
 
+    if (this.locationId === "deepForest") {
+      createTextAction(this, columns.center, 228, "Follow the hidden path back to the forest", () => {
+        this.scene.start("explore", { locationId: "forest" });
+      });
+      return;
+    }
+
     if (exploration) {
       const reward = this.formatRewardPreview(exploration.reward);
       createTextAction(
@@ -83,18 +90,26 @@ export class ExploreScene extends Phaser.Scene {
         () => this.beginExploration(exploration),
         !this.explorationActive,
       );
-    } else {
-      createTextAction(
-        this,
-        columns.center,
-        228,
-        "Nothing has been discovered here yet",
-        () => undefined,
-        false,
-      );
     }
 
-    createTextAction(this, columns.center, 270, "Walk back toward the village", () => {
+    let returnY = 270;
+    if (
+      this.locationId === "forest" &&
+      gameState.discoveredLocations.includes("deepForest")
+    ) {
+      createTextAction(this, columns.center, 270, "Follow the hidden path deeper", () => {
+        this.scene.start("explore", { locationId: "deepForest" });
+      });
+      returnY = 304;
+    }
+
+    const returnLabel =
+      this.locationId === "forest"
+        ? "Follow the path south to the village edge"
+        : this.locationId === "mine"
+          ? "Leave the passage and walk west"
+          : "Walk back toward Willow Village";
+    createTextAction(this, columns.center, returnY, returnLabel, () => {
       this.scene.start("town");
     });
   }

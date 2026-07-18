@@ -12,7 +12,8 @@ export interface GameState {
     | "townHall"
     | "shelter"
     | "villageEdge"
-    | "mineEntrance";
+    | "mineEntrance"
+    | "southRoad";
   villagePeople: {
     woodsmanMet: boolean;
     formerMinerMet: boolean;
@@ -22,6 +23,8 @@ export interface GameState {
     surveyedVillage: boolean;
     knowsForest: boolean;
     knowsMine: boolean;
+    knowsLake: boolean;
+    knowsPlains: boolean;
     knowsWood: boolean;
     knowsStone: boolean;
     knowsHerb: boolean;
@@ -58,6 +61,8 @@ export const gameState: GameState = {
     surveyedVillage: false,
     knowsForest: false,
     knowsMine: false,
+    knowsLake: false,
+    knowsPlains: false,
     knowsWood: false,
     knowsStone: false,
     knowsHerb: false,
