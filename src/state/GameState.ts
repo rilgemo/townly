@@ -10,6 +10,7 @@ export interface GameState {
   currentTownPlace:
     | "townSquare"
     | "townHall"
+    | "shelter"
     | "villageEdge"
     | "mineEntrance";
   villagePeople: {

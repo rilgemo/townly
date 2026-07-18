@@ -133,6 +133,9 @@ function getKnownKnowledge(): string[] {
   if (gameState.knowledge.knowsVillage) {
     knowledge.push("Willow Village");
   }
+  if (gameState.introduction.shelterReceived) {
+    knowledge.push("Your shelter");
+  }
   if (gameState.knowledge.knowsForest) {
     knowledge.push("Forest path");
   }

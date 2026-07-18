@@ -158,7 +158,7 @@ export class ArrivalScene extends Phaser.Scene {
         gameState.introduction.chiefMet = true;
         gameState.introduction.shelterReceived = true;
         this.message =
-          'Village Chief: "There is an empty shelter near the square. You may stay there. If you wish to help, speak with the people who work around the village."';
+          'Village Chief: "There is a small room near the square. It has been empty for years. You may use it while you decide your next step."';
         this.renderPlace();
       });
       return;
@@ -169,7 +169,8 @@ export class ArrivalScene extends Phaser.Scene {
       this.scene.start("town");
     });
     createTextAction(this, columns.center, 332, "Speak with Village Chief", () => {
-      this.message = 'Village Chief: "Start with simple work. The village will grow in time."';
+      this.message =
+        'Village Chief: "The room is yours for as long as you need it. When you are ready, speak with the people who work around the village."';
       this.renderPlace();
     });
   }

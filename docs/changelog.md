@@ -11,6 +11,8 @@ Notable project changes are recorded here.
 - Pull request template centered on player experience and world change.
 - Arrival milestone polish with observation-first pacing and natural village introduction.
 - Arrival vision document recording player experience and completion criteria.
+- Belonging milestone with Your Shelter as a personal village place.
+- State-based Guard and Village Chief recognition without relationship systems.
 - Initial Phaser, Vite, and TypeScript project structure.
 - Starter town scene.
 - Clickable travel from Town to Forest, Mine, Plains, and Lake.

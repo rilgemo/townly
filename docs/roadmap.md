@@ -8,6 +8,13 @@
 - [x] Enter the village and meet the Village Chief.
 - [x] Receive temporary shelter and a reason to speak with residents.
 
+## Belonging
+
+- [x] Turn the offered room into Your Shelter.
+- [x] Make the shelter a place the player can return to.
+- [x] Let the Guard recognize the village's new resident.
+- [x] Let the Chief acknowledge visible player progress.
+
 ## Prototype
 
 - [x] Establish the location navigation loop.
