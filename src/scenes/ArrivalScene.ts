@@ -20,7 +20,7 @@ const places: Record<typeof gameState.introduction.currentPlace, PlaceContent> =
   outskirts: {
     area: "Village Outskirts",
     name: "The Old Road",
-    description: "The road ends at a poor village. Smoke rises from worn roofs.\nA lone guard watches the wooden gate.",
+    description: "You wake beside an unfamiliar road. The morning is quiet.\nA weathered wooden gate stands some distance ahead.",
     npcs: [],
   },
   gate: {
@@ -44,7 +44,7 @@ const places: Record<typeof gameState.introduction.currentPlace, PlaceContent> =
 };
 
 export class ArrivalScene extends Phaser.Scene {
-  private message = "You have arrived at the edge of an unfamiliar village.";
+  private message = "You wake with dust on your clothes and no memory of this road.";
 
   constructor() {
     super("arrival");
@@ -71,7 +71,6 @@ export class ArrivalScene extends Phaser.Scene {
       },
     );
 
-    addSectionTitle(this, columns.center, 32, "Current Place");
     this.add.text(columns.center, 60, place.name, {
       color: colors.primary,
       fontFamily: fonts.title,
@@ -84,7 +83,7 @@ export class ArrivalScene extends Phaser.Scene {
       lineSpacing: 7,
     });
 
-    addSectionTitle(this, columns.center, 176, "NPCs");
+    addSectionTitle(this, columns.center, 176, "People Here");
     this.add.text(
       columns.center,
       202,
@@ -97,10 +96,10 @@ export class ArrivalScene extends Phaser.Scene {
       },
     );
 
-    addSectionTitle(this, columns.center, 270, "Available Actions");
+    addSectionTitle(this, columns.center, 270, "What You Can Do");
     this.renderActions();
 
-    addSectionTitle(this, columns.center, 414, "Recent");
+    addSectionTitle(this, columns.center, 414, "What Happened");
     this.add.text(columns.center, 440, this.message, {
       color: colors.secondary,
       fontFamily: fonts.body,

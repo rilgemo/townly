@@ -23,7 +23,7 @@ interface ExploreSceneData {
 
 export class ExploreScene extends Phaser.Scene {
   private locationId: LocationId = "forest";
-  private message = "Choose an action.";
+  private message = "You take in your surroundings.";
   private explorationActive = false;
 
   constructor() {
@@ -32,7 +32,7 @@ export class ExploreScene extends Phaser.Scene {
 
   init(data: ExploreSceneData): void {
     this.locationId = data.locationId;
-    this.message = "Choose an action.";
+    this.message = "You take in your surroundings.";
     this.explorationActive = false;
   }
 
@@ -47,7 +47,6 @@ export class ExploreScene extends Phaser.Scene {
       nearbyPlaces: this.getNearbyPlaces(),
     });
 
-    addSectionTitle(this, columns.center, 32, "Current Place");
     this.add.text(columns.center, 60, `${location.symbol} ${location.name}`, {
       color: colors.primary,
       fontFamily: fonts.title,
@@ -59,17 +58,17 @@ export class ExploreScene extends Phaser.Scene {
       fontSize: "13px",
     });
 
-    addSectionTitle(this, columns.center, 166, "NPCs");
+    addSectionTitle(this, columns.center, 166, "People Here");
     this.add.text(columns.center, 192, "No one is nearby.", {
       color: colors.muted,
       fontFamily: fonts.body,
       fontSize: "13px",
     });
 
-    addSectionTitle(this, columns.center, 236, "Available Actions");
+    addSectionTitle(this, columns.center, 236, "What You Can Do");
     this.renderActions();
 
-    addSectionTitle(this, columns.center, 390, "Recent");
+    addSectionTitle(this, columns.center, 390, "What Happened");
     this.add.text(columns.center, 416, this.message, {
       color: this.explorationActive ? colors.secondary : colors.success,
       fontFamily: fonts.body,
@@ -89,8 +88,8 @@ export class ExploreScene extends Phaser.Scene {
         columns.center,
         266,
         this.explorationActive
-          ? "Exploration in progress"
-          : `Explore (${exploration.durationSeconds}s → ${reward})`,
+          ? "Searching..."
+          : `${this.getSearchAction()} (${exploration.durationSeconds}s → ${reward})`,
         () => this.beginExploration(exploration),
         !this.explorationActive,
       );
@@ -113,7 +112,7 @@ export class ExploreScene extends Phaser.Scene {
   private beginExploration(exploration: Exploration): void {
     this.explorationActive = true;
     let secondsRemaining = exploration.durationSeconds;
-    this.message = `Exploring... ${secondsRemaining}s remaining`;
+    this.message = `Searching... ${secondsRemaining}s remaining`;
     this.renderPlace();
 
     this.time.addEvent({
@@ -122,7 +121,7 @@ export class ExploreScene extends Phaser.Scene {
       callback: () => {
         secondsRemaining -= 1;
         if (secondsRemaining > 0) {
-          this.message = `Exploring... ${secondsRemaining}s remaining`;
+          this.message = `Searching... ${secondsRemaining}s remaining`;
           this.renderPlace();
           return;
         }
@@ -191,5 +190,15 @@ export class ExploreScene extends Phaser.Scene {
       nearby.push("Deep Forest");
     }
     return nearby;
+  }
+
+  private getSearchAction(): string {
+    if (this.locationId === "forest") {
+      return "Search beneath the trees";
+    }
+    if (this.locationId === "mine") {
+      return "Search the side passage";
+    }
+    return "Search the area";
   }
 }

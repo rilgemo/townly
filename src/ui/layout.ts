@@ -72,39 +72,50 @@ export function createTextAction(
 }
 
 function renderPlayerSidebar(scene: Phaser.Scene): void {
-  scene.add.text(columns.left, 28, "PLAYER", {
+  scene.add.text(columns.left, 28, "YOU", {
     color: colors.primary,
     fontFamily: fonts.title,
     fontSize: "22px",
   });
 
-  addSectionTitle(scene, columns.left, 78, "Identity");
-  scene.add.text(columns.left, 104, `Name       ${gameState.player.name}`, bodyStyle());
-  scene.add.text(columns.left, 128, "Role       Newcomer", bodyStyle());
+  scene.add.text(
+    columns.left,
+    76,
+    gameState.knowledge.knowsVillage
+      ? `${gameState.player.name}.\nA traveler in Willow Village.`
+      : "A stranger.\nYou remember little of this place.",
+    {
+      ...bodyStyle(),
+      lineSpacing: 7,
+    },
+  );
 
-  addSectionTitle(scene, columns.left, 174, "Condition");
-  scene.add.text(columns.left, 200, "Status     Ready", bodyStyle());
-  scene.add.text(columns.left, 224, "Shelter    " + (gameState.introduction.shelterReceived ? "Available" : "None"), bodyStyle());
+  if (gameState.introduction.shelterReceived) {
+    scene.add.text(columns.left, 136, "You have a place to rest.", bodyStyle(colors.muted));
+  }
 
-  addSectionTitle(scene, columns.left, 270, "Carrying");
+  addSectionTitle(scene, columns.left, 196, "Carrying");
   const knownResourceIds = resourceIds.filter(isResourceKnown);
   if (knownResourceIds.length === 0) {
-    scene.add.text(columns.left, 296, "Nothing", bodyStyle(colors.muted));
+    scene.add.text(columns.left, 224, "Nothing", bodyStyle(colors.muted));
   }
   knownResourceIds.forEach((resourceId, index) => {
     const resource = resources[resourceId];
     scene.add.text(
       columns.left,
-      296 + index * 24,
+      224 + index * 24,
       `${resource.symbol} ${resource.name.padEnd(8)} ${getResourceAmount(resourceId)}`,
       bodyStyle(),
     );
   });
 
-  addSectionTitle(scene, columns.left, 398, "Known");
-  getKnownKnowledge().forEach((knowledge, index) => {
-    scene.add.text(columns.left, 424 + index * 22, `· ${knowledge}`, bodyStyle(colors.muted));
-  });
+  const knowledge = getKnownKnowledge();
+  if (knowledge.length > 0) {
+    addSectionTitle(scene, columns.left, 330, "You Know");
+    knowledge.forEach((item, index) => {
+      scene.add.text(columns.left, 358 + index * 22, `· ${item}`, bodyStyle(colors.muted));
+    });
+  }
 }
 
 function renderWorldSidebar(
@@ -113,29 +124,40 @@ function renderWorldSidebar(
   currentPlace: string,
   nearbyPlaces: string[],
 ): void {
-  addSectionTitle(scene, columns.right, 32, "Current Area");
-  scene.add.text(columns.right, 62, currentArea, {
+  scene.add.text(columns.right, 28, "AROUND YOU", {
     color: colors.primary,
     fontFamily: fonts.title,
-    fontSize: "20px",
+    fontSize: "22px",
   });
-  scene.add.text(columns.right, 94, currentPlace, bodyStyle(colors.secondary));
 
-  addSectionTitle(scene, columns.right, 158, "Time");
-  scene.add.text(columns.right, 186, "Morning", bodyStyle());
-  scene.add.text(columns.right, 212, "Day 1", bodyStyle(colors.muted));
+  if (currentArea === "Unknown") {
+    scene.add.text(columns.right, 76, "You don't recognize\nthis place.", {
+      ...bodyStyle(),
+      lineSpacing: 7,
+    });
+  } else {
+    scene.add.text(columns.right, 76, currentArea, {
+      color: colors.primary,
+      fontFamily: fonts.title,
+      fontSize: "18px",
+    });
+    scene.add.text(columns.right, 108, currentPlace, bodyStyle(colors.secondary));
+  }
 
-  addSectionTitle(scene, columns.right, 306, "Weather");
-  scene.add.text(columns.right, 334, "Clear", bodyStyle());
+  scene.add.text(columns.right, 172, "Morning", bodyStyle());
+  scene.add.text(columns.right, 198, "The sky is clear.", bodyStyle(colors.muted));
 
-  addSectionTitle(scene, columns.right, 410, "Nearby / Known");
   if (nearbyPlaces.length === 0) {
-    scene.add.text(columns.right, 438, "Nothing recorded.", bodyStyle(colors.muted));
+    return;
+  }
+
+  addSectionTitle(scene, columns.right, 270, "You Notice");
+  if (nearbyPlaces.length === 0) {
     return;
   }
 
   nearbyPlaces.slice(0, 4).forEach((place, index) => {
-    scene.add.text(columns.right, 438 + index * 22, `· ${place}`, bodyStyle());
+    scene.add.text(columns.right, 298 + index * 24, `· ${place}`, bodyStyle());
   });
 }
 
@@ -158,7 +180,7 @@ function getKnownKnowledge(): string[] {
     knowledge.push("Restored Town Hall");
   }
 
-  return knowledge.length > 0 ? knowledge : ["Unknown"];
+  return knowledge;
 }
 
 function isResourceKnown(resourceId: (typeof resourceIds)[number]): boolean {

@@ -30,5 +30,7 @@ Notable project changes are recorded here.
 - Knowledge-driven interface hiding unknown areas, places, and resources.
 - Old Road observation and Village Guard reveal flow for Willow Village.
 - Resource knowledge revealed through first collection.
+- Narrative-first panel language centered on You, Around You, and current experience.
+- Empty system-style sections hidden until they contain naturally known information.
 - Lightweight roadmap, ideas, mechanics, and changelog documents.
 - GitHub Actions build workflow.

@@ -64,7 +64,6 @@ export class TownScene extends Phaser.Scene {
       nearbyPlaces: this.getNearbyPlaces(),
     });
 
-    addSectionTitle(this, columns.center, 32, "Current Place");
     this.add.text(columns.center, 60, place.name, {
       color: colors.primary,
       fontFamily: fonts.title,
@@ -72,7 +71,7 @@ export class TownScene extends Phaser.Scene {
     });
     const placeDescription =
       gameState.currentTownPlace === "townHall"
-        ? `${place.description}\nTown Hall Level: ${gameState.town.level}`
+        ? `${place.description}\nCondition: ${gameState.town.level >= 2 ? "Restored" : "Worn"}`
         : place.description;
     this.add.text(columns.center, 102, placeDescription, {
       color: colors.secondary,
@@ -81,7 +80,7 @@ export class TownScene extends Phaser.Scene {
       lineSpacing: 7,
     });
 
-    addSectionTitle(this, columns.center, 166, "NPCs");
+    addSectionTitle(this, columns.center, 166, "People Here");
     place.npcIds.forEach((npcId, index) => {
       const npc = npcs[npcId];
       this.add.text(columns.center, 192 + index * 24, `${npc.icon} ${npc.name}`, {
@@ -96,10 +95,10 @@ export class TownScene extends Phaser.Scene {
       });
     });
 
-    addSectionTitle(this, columns.center, 252, "Available Actions");
+    addSectionTitle(this, columns.center, 252, "What You Can Do");
     this.renderActions();
 
-    addSectionTitle(this, columns.center, 454, "Recent");
+    addSectionTitle(this, columns.center, 454, "What Happened");
     this.add.text(columns.center, 478, this.message, {
       color: colors.secondary,
       fontFamily: fonts.body,
@@ -264,7 +263,7 @@ export class TownScene extends Phaser.Scene {
       this,
       columns.center,
       y,
-      `Travel to ${location.symbol} ${location.name}`,
+      `Go to ${location.symbol} ${location.name}`,
       () => this.scene.start("explore", { locationId }),
     );
   }

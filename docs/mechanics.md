@@ -31,6 +31,7 @@ This document records gameplay rules that are implemented or approved for implem
 - Village name, nearby places, resource names, and travel actions appear only after the player learns or observes them.
 - Looking around reveals local possibilities; the Village Guard reveals the name Willow Village.
 - A resource first appears in the player panel after it has been collected.
+- Interface language describes the player's experience rather than exposing RPG system categories.
 
 ## Design Principle
 
