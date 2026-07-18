@@ -8,7 +8,7 @@ A small idle RPG about growing a town through exploration.
 
 ## Design Direction
 
-All features and interface changes should be evaluated against the [Townly Design Manifesto](docs/design-manifesto.md).
+All features and interface changes should be evaluated against the [Townly Design Manifesto](docs/manifesto/design-manifesto.md). See the [documentation guide](docs/README.md) for Townly's decision layers and Experience First Rule.
 
 ## Status
 
