@@ -9,6 +9,8 @@ Notable project changes are recorded here.
 - Townly Design Manifesto v0.1 as the reference for future product decisions.
 - Four-layer documentation guide and Experience First development rule.
 - Pull request template centered on player experience and world change.
+- Arrival milestone polish with observation-first pacing and natural village introduction.
+- Arrival vision document recording player experience and completion criteria.
 - Initial Phaser, Vite, and TypeScript project structure.
 - Starter town scene.
 - Clickable travel from Town to Forest, Mine, Plains, and Lake.

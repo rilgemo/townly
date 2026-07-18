@@ -17,7 +17,7 @@ interface PlaceContent {
 const places: Record<typeof gameState.introduction.currentPlace, PlaceContent> = {
   outskirts: {
     name: "The Old Road",
-    description: "You wake beside an unfamiliar road. The morning is quiet.\nA weathered wooden gate stands some distance ahead.",
+    description: "You wake beside an unfamiliar road. The morning is cool and quiet.\nTall grass bends in the breeze. You do not recognize the surroundings.",
     npcs: [],
   },
   gate: {
@@ -56,6 +56,11 @@ export class ArrivalScene extends Phaser.Scene {
   private renderPlace(): void {
     this.children.removeAll();
     const place = places[gameState.introduction.currentPlace];
+    const description =
+      gameState.introduction.currentPlace === "outskirts" &&
+      gameState.introduction.lookedAround
+        ? "The old road runs toward a weathered wooden gate.\nSomeone appears to be standing watch beside it."
+        : place.description;
     renderLayout(this, {
       nearbyPlaces: this.getNearbyPlaces(),
     });
@@ -65,7 +70,7 @@ export class ArrivalScene extends Phaser.Scene {
       fontFamily: fonts.title,
       fontSize: "29px",
     });
-    this.add.text(columns.center, 102, place.description, {
+    this.add.text(columns.center, 102, description, {
       color: colors.primary,
       fontFamily: fonts.body,
       fontSize: "15px",
@@ -96,15 +101,20 @@ export class ArrivalScene extends Phaser.Scene {
     const place = gameState.introduction.currentPlace;
 
     if (place === "outskirts") {
-      createTextAction(this, columns.center, 302, "Look around", () => {
-        gameState.introduction.lookedAround = true;
-        this.message =
-          "You notice a weathered wooden gate ahead. A guard stands beside it.";
-        this.renderPlace();
-      });
-      createTextAction(this, columns.center, 332, "Approach the village gate", () => {
+      if (!gameState.introduction.lookedAround) {
+        createTextAction(this, columns.center, 302, "Look around", () => {
+          gameState.introduction.lookedAround = true;
+          this.message =
+            "Beyond the grass, the road leads to a wooden gate. A solitary figure stands nearby.";
+          this.renderPlace();
+        });
+        return;
+      }
+
+      createTextAction(this, columns.center, 302, "Walk toward the gate", () => {
         gameState.introduction.currentPlace = "gate";
-        this.message = "You follow the road to the gate.";
+        this.message =
+          "Your footsteps carry along the old road. The figure at the gate turns to face you.";
         this.renderPlace();
       });
       return;
@@ -116,7 +126,7 @@ export class ArrivalScene extends Phaser.Scene {
           gameState.introduction.guardMet = true;
           gameState.knowledge.knowsVillage = true;
           this.message =
-            'Village Guard: "You are standing outside Willow Village. We turn away no one in need. Speak with the Chief." New knowledge: Willow Village.';
+            'Village Guard: "You are standing outside Willow Village. We have little, but we turn away no one in need. Speak with the Chief inside."';
           this.renderPlace();
         });
       } else {
@@ -148,13 +158,13 @@ export class ArrivalScene extends Phaser.Scene {
         gameState.introduction.chiefMet = true;
         gameState.introduction.shelterReceived = true;
         this.message =
-          'Village Chief: "Use the empty shelter. You can find useful materials through work around the village."';
+          'Village Chief: "There is an empty shelter near the square. You may stay there. If you wish to help, speak with the people who work around the village."';
         this.renderPlace();
       });
       return;
     }
 
-    createTextAction(this, columns.center, 302, "Begin life in Townly", () => {
+    createTextAction(this, columns.center, 302, "Step back into the village", () => {
       gameState.introduction.completed = true;
       this.scene.start("town");
     });

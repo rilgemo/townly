@@ -1,5 +1,13 @@
 # Roadmap
 
+## Arrival
+
+- [x] Begin on an unknown road with no world knowledge.
+- [x] Reveal the gate through observation.
+- [x] Learn Willow Village's name from the guard.
+- [x] Enter the village and meet the Village Chief.
+- [x] Receive temporary shelter and a reason to speak with residents.
+
 ## Prototype
 
 - [x] Establish the location navigation loop.
