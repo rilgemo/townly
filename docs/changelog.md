@@ -32,6 +32,8 @@ Notable project changes are recorded here.
 - Existing resident descriptions reframed around records and preserved practical knowledge.
 - Restoration Paths Foundation defining four lost village capabilities without implementing production systems.
 - Existing resident dialogue now recalls workshops, tool repair, fields, and hospitality as village history.
+- Daily Presence Foundation adding state-aware shelter reflection and Town Square observation.
+- Existing conversations now recognize familiarity and restoration without relationship or quest systems.
 - Versioned localStorage persistence for current player, world, knowledge, people, and restoration state.
 - Automatic startup loading, state-change saving, and Save/Load/Reset text actions.
 - Invalid save validation with safe fresh-game fallback.

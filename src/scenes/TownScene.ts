@@ -125,6 +125,11 @@ export class TownScene extends Phaser.Scene {
             "Trees crowd the north. A hill road runs east. Water glints west. The old gate opens south.";
           this.renderTown();
         });
+      } else {
+        createTextAction(this, columns.center, y, "Pause and watch the village", () => {
+          this.message = this.getTownSquareObservation();
+          this.renderTown();
+        });
       }
       createTextAction(this, columns.center, y + 28, "Step into the Town Hall", () => {
         gameState.currentTownPlace = "townHall";
@@ -153,6 +158,10 @@ export class TownScene extends Phaser.Scene {
       createTextAction(this, columns.center, y + 28, "Rest against the wall", () => {
         this.message =
           "You sit against the worn wall for a while. Village sounds drift through the window.";
+        this.renderTown();
+      });
+      createTextAction(this, columns.center, y + 56, "Reflect on Willow Village", () => {
+        this.message = this.getShelterReflection();
         this.renderTown();
       });
       return;
@@ -342,6 +351,9 @@ export class TownScene extends Phaser.Scene {
   }
 
   private getGuardMessage(): string {
+    if (gameState.restoration.townHallDoorRepaired) {
+      return 'Village Guard: "That hall door looks different every time I pass it. Not new—just cared for. You have made your mark here."';
+    }
     if (gameState.villagePeople.woodsmanMet || gameState.villagePeople.formerMinerMet) {
       return 'Village Guard: "You are finding your way around. People have started to recognize you."';
     }
@@ -359,6 +371,26 @@ export class TownScene extends Phaser.Scene {
       return 'Village Chief: "You are beginning to understand what this village once was—workshops in use, fuller fields, and a warm room for travelers. We remember the shape of that life."';
     }
     return 'Village Chief: "We have lasted on small gardens, careful stores, and neighbors sharing what they can. I keep the records so we do not forget how."';
+  }
+
+  private getTownSquareObservation(): string {
+    if (gameState.restoration.townHallDoorRepaired) {
+      return "Someone carries a basket past the hall. The mended door closes behind them without scraping, and the conversation continues.";
+    }
+    if (gameState.villagePeople.woodsmanMet && gameState.villagePeople.formerMinerMet) {
+      return "You recognize more faces now. Neighbors trade garden greens, straighten old handles, and greet you without pausing their work.";
+    }
+    return "Smoke drifts from a cooking fire. Two neighbors divide a small basket of greens while another binds an old tool handle.";
+  }
+
+  private getShelterReflection(): string {
+    if (gameState.restoration.townHallDoorRepaired) {
+      return "From this empty room, you think of the Town Hall door closing properly again. Willow Village has begun to hold traces of your care.";
+    }
+    if (gameState.villagePeople.woodsmanMet || gameState.villagePeople.formerMinerMet) {
+      return "The room is still bare, but the village beyond it is no longer faceless. You can picture the people who keep its memories alive.";
+    }
+    return "The room remains unfamiliar, yet the sounds beyond its walls no longer feel entirely distant.";
   }
 
   private getPlaceDescription(place: TownPlace): string {

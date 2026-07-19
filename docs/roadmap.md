@@ -57,6 +57,13 @@
 - [x] Connect existing residents to the village's practical history.
 - [x] Avoid buildings, production, economy, recruitment, skills, and capability architecture.
 
+## Daily Presence Foundation
+
+- [x] Add non-mechanical shelter observation, rest, and reflection.
+- [x] Let the player pause and observe ordinary Town Square life.
+- [x] Vary existing resident responses using existing knowledge and restoration state.
+- [x] Avoid time, schedules, relationships, quests, and new progression systems.
+
 ## Persistence Foundation
 
 - [x] Save complete current GameState to versioned browser storage.
