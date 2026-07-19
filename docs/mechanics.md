@@ -9,7 +9,7 @@ This document records gameplay rules that are implemented or approved for implem
 1. Explore a surrounding region.
 2. Discover resources and encounters.
 3. Return resources to town.
-4. Upgrade the town.
+4. Repair a visible part of the village.
 5. Unlock new exploration opportunities.
 
 ## Implemented
@@ -19,8 +19,8 @@ This document records gameplay rules that are implemented or approved for implem
 - Examining Forest wild plants takes 10 seconds and finds 1 Herb.
 - Searching Mine rubble takes 10 seconds and finds 2 Stone.
 - Resources remain in memory for the current browser session.
-- Repairing the Town Hall costs 10 Wood and 5 Stone.
-- The first Town Hall repair raises the Town from level 1 to level 2.
+- Mending the Town Hall entrance uses 10 Wood and 5 Stone from existing resource state.
+- The repair changes the door description permanently; it does not create a building level or feature unlock.
 - Completing three Forest actions reveals the hidden route to Deep Forest.
 - Deep Forest is added to the Town location list when discovered.
 - A new player arrives outside the village, meets the Village Guard, and is admitted through the gate.

@@ -24,6 +24,8 @@ Notable project changes are recorded here.
 - Simple shelter observation and rest actions without furniture or housing systems.
 - Restoration Model vision defining restoration as recovered village life rather than construction.
 - Conceptual Abandoned, Recognized, Restored, and Active place states without implementation.
+- First Restoration Moment replacing Town Hall levels with one persistent repaired door.
+- Town Square, Town Hall, and Village Chief responses reflecting the visible repair.
 - Initial Phaser, Vite, and TypeScript project structure.
 - Starter town scene.
 - Clickable travel from Town to Forest, Mine, Plains, and Lake.

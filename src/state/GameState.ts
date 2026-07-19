@@ -2,8 +2,8 @@ import type { LocationId, Player, ResourceInventory } from "../types/game";
 
 export interface GameState {
   player: Player;
-  town: {
-    level: number;
+  restoration: {
+    townHallDoorRepaired: boolean;
   };
   discoveredLocations: LocationId[];
   explorationCounts: Partial<Record<LocationId, number>>;
@@ -46,8 +46,8 @@ export const gameState: GameState = {
     name: "Traveler",
     level: 1,
   },
-  town: {
-    level: 1,
+  restoration: {
+    townHallDoorRepaired: false,
   },
   discoveredLocations: ["town", "plains", "lake"],
   explorationCounts: {},

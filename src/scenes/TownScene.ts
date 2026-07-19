@@ -3,10 +3,9 @@ import Phaser from "phaser";
 import { npcs, type NpcId } from "../data/npcs";
 import { gameState } from "../state/GameState";
 import {
-  canUpgradeTownHall,
-  townHallUpgradeCost,
-  upgradeTownHall,
-} from "../systems/TownUpgradeSystem";
+  canRepairTownHallDoor,
+  repairTownHallDoor,
+} from "../systems/RestorationSystem";
 import type { LocationId } from "../types/game";
 import { columns, createTextAction, renderLayout } from "../ui/layout";
 import { colors, fonts } from "../ui/theme";
@@ -71,10 +70,7 @@ export class TownScene extends Phaser.Scene {
       fontFamily: fonts.title,
       fontSize: "29px",
     });
-    const description =
-      gameState.currentTownPlace === "townHall"
-        ? `${place.description}\nCondition: ${gameState.town.level >= 2 ? "Restored" : "Worn"}`
-        : place.description;
+    const description = this.getPlaceDescription(place);
     this.add.text(columns.center, 92, description, {
       color: colors.primary,
       fontFamily: fonts.body,
@@ -190,31 +186,39 @@ export class TownScene extends Phaser.Scene {
   }
 
   private renderTownHallAction(y: number): void {
-    if (gameState.town.level >= 2) {
+    if (gameState.restoration.townHallDoorRepaired) {
       return;
     }
 
-    const woodCost = townHallUpgradeCost.wood ?? 0;
-    const stoneCost = townHallUpgradeCost.stone ?? 0;
     const knowsRequirements =
       gameState.knowledge.knowsWood && gameState.knowledge.knowsStone;
-    const affordable = canUpgradeTownHall();
+    const canRepair = canRepairTownHallDoor();
     createTextAction(
       this,
       columns.center,
       y,
       !knowsRequirements
-        ? "Examine what the hall needs"
-        : affordable
-          ? `Repair the hall (${woodCost} Wood, ${stoneCost} Stone)`
-          : `The hall still needs ${woodCost} Wood and ${stoneCost} Stone`,
+        ? "Examine the crooked entrance door"
+        : canRepair
+          ? "Use the materials you found to mend the door"
+          : "Consider how the loose door might be mended",
       () => {
-        if (upgradeTownHall()) {
-          this.message = "The old hall stands firm again. Voices linger inside longer than before.";
-          this.renderTown();
+        if (!knowsRequirements) {
+          this.message =
+            "The old hinges pull against rotten wood. Sound timber and firm stone could steady the frame.";
+        } else if (!canRepair) {
+          this.message =
+            "You can see how the frame might be braced, but the usable pieces you carry are not yet enough.";
+        } else if (repairTownHallDoor()) {
+          this.message =
+            "You brace the frame with usable wood and set loose stones beneath it. The Town Hall door closes properly again.";
         }
+        if (gameState.restoration.townHallDoorRepaired) {
+          this.renderTown();
+          return;
+        }
+        this.renderTown();
       },
-      knowsRequirements && affordable,
     );
   }
 
@@ -339,8 +343,8 @@ export class TownScene extends Phaser.Scene {
   }
 
   private getChiefMessage(): string {
-    if (gameState.town.level >= 2) {
-      return 'Village Chief: "The restored hall has given everyone some hope. You helped make that possible."';
+    if (gameState.restoration.townHallDoorRepaired) {
+      return 'Village Chief: "I had forgotten that door could close without a shoulder against it. The hall already feels cared for again."';
     }
     if (gameState.discoveredLocations.includes("deepForest")) {
       return 'Village Chief: "You have learned paths even some of us had forgotten. Willow Village is fortunate you stayed."';
@@ -349,5 +353,19 @@ export class TownScene extends Phaser.Scene {
       return 'Village Chief: "You are beginning to understand what this village once was."';
     }
     return 'Village Chief: "I hope the room has been comfortable enough. You are welcome here while you find your place."';
+  }
+
+  private getPlaceDescription(place: TownPlace): string {
+    if (gameState.currentTownPlace === "townSquare") {
+      return gameState.restoration.townHallDoorRepaired
+        ? `${place.description}\nAcross the square, the Town Hall door sits straight in its frame.`
+        : `${place.description}\nAcross the square, the Town Hall entrance hangs crooked and worn.`;
+    }
+    if (gameState.currentTownPlace === "townHall") {
+      return gameState.restoration.townHallDoorRepaired
+        ? `${place.description}\nThe entrance door closes cleanly now, showing the first clear sign of care.`
+        : `${place.description}\nThe heavy entrance door hangs loose, scraping against the stone threshold.`;
+    }
+    return place.description;
   }
 }

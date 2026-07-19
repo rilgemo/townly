@@ -29,6 +29,13 @@
 - [x] Connect abandoned places to resident memory and village possibilities.
 - [x] Preserve the model without implementing building systems.
 
+## First Restoration Moment
+
+- [x] Present the Town Hall entrance as visibly damaged.
+- [x] Let existing gathered materials mend one specific door.
+- [x] Reflect the repair permanently in Town Square and Town Hall descriptions.
+- [x] Avoid levels, construction menus, cost UI, and feature unlocks.
+
 ## Spatial Identity
 
 - [x] Establish Town Square as Willow Village's center.
@@ -62,7 +69,7 @@
 - [x] Connect the Old Woodsman and Former Miner to the village's lost history.
 - [x] Let player observation reveal Forest and Mine access independently of NPC permission.
 - [x] Gate interface information behind player knowledge.
-- [x] Add the first Town Hall upgrade.
+- [x] Add the first visible Town Hall door restoration.
 - [ ] Add local save and load.
 
 ## First Playable

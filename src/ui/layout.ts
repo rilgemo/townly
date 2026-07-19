@@ -151,8 +151,8 @@ function getKnownKnowledge(): string[] {
   if (gameState.discoveredLocations.includes("deepForest")) {
     knowledge.push("Hidden forest path");
   }
-  if (gameState.town.level >= 2) {
-    knowledge.push("Restored Town Hall");
+  if (gameState.restoration.townHallDoorRepaired) {
+    knowledge.push("Mended Town Hall door");
   }
   return knowledge;
 }
