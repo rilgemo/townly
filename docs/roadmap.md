@@ -22,6 +22,13 @@
 - [x] Reframe residents as witnesses and guides rather than progression switches.
 - [x] Connect gathered materials to bringing old village places back.
 
+## Restoration Model
+
+- [x] Define restoration as recovering village life rather than construction.
+- [x] Define Abandoned, Recognized, Restored, and Active as future design language.
+- [x] Connect abandoned places to resident memory and village possibilities.
+- [x] Preserve the model without implementing building systems.
+
 ## Spatial Identity
 
 - [x] Establish Town Square as Willow Village's center.

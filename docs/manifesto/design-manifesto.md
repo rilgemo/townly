@@ -110,6 +110,8 @@ Townly 是一个需要被逐渐学会的小世界。方向先于地点名称，�
 
 **每一次的发展，都代表这个村庄的某个未来被实现。**
 
+**Restoration ≠ Construction.** 玩家不是为了取得功能而建造新设施，而是让曾经属于村庄的生活重新回来。
+
 不是 `Upgrade Hall Lv2`，而是：
 
 > Village Hall restored.
