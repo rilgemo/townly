@@ -2,6 +2,11 @@ import Phaser from "phaser";
 
 import { resourceIds, resources } from "../data/resources";
 import { gameState } from "../state/GameState";
+import {
+  loadGame,
+  resetGame,
+  saveGame,
+} from "../systems/PersistenceSystem";
 import { getResourceAmount } from "../systems/ResourceSystem";
 import { colors, fonts } from "./theme";
 
@@ -113,6 +118,8 @@ function renderWorldContext(scene: Phaser.Scene, nearbyPlaces: string[]): void {
   });
   scene.add.text(columns.right, 68, "The sky is clear.", bodyStyle(colors.muted));
 
+  renderPersistenceActions(scene);
+
   if (nearbyPlaces.length === 0) {
     return;
   }
@@ -125,6 +132,33 @@ function renderWorldContext(scene: Phaser.Scene, nearbyPlaces: string[]): void {
   );
   nearbyPlaces.slice(0, 4).forEach((place, index) => {
     scene.add.text(columns.right, 194 + index * 26, `• ${place}`, bodyStyle());
+  });
+}
+
+function renderPersistenceActions(scene: Phaser.Scene): void {
+  createTextAction(scene, columns.right, 430, "Save Game", () => {
+    saveGame();
+  });
+  createTextAction(scene, columns.right, 458, "Load Game", () => {
+    if (!loadGame()) {
+      return;
+    }
+    if (
+      gameState.player.currentScene === "explore" &&
+      gameState.player.currentLocation
+    ) {
+      scene.scene.start("explore", {
+        locationId: gameState.player.currentLocation,
+      });
+      return;
+    }
+    scene.scene.start(
+      gameState.introduction.completed ? "town" : "arrival",
+    );
+  });
+  createTextAction(scene, columns.right, 486, "Reset Game", () => {
+    resetGame();
+    scene.scene.start("arrival");
   });
 }
 

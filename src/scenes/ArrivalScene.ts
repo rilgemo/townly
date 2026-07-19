@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 
 import { gameState } from "../state/GameState";
+import { saveGame } from "../systems/PersistenceSystem";
 import {
   columns,
   createTextAction,
@@ -46,7 +47,16 @@ export class ArrivalScene extends Phaser.Scene {
 
   create(): void {
     if (gameState.introduction.completed) {
-      this.scene.start("town");
+      if (
+        gameState.player.currentScene === "explore" &&
+        gameState.player.currentLocation
+      ) {
+        this.scene.start("explore", {
+          locationId: gameState.player.currentLocation,
+        });
+      } else {
+        this.scene.start("town");
+      }
       return;
     }
 
@@ -54,6 +64,9 @@ export class ArrivalScene extends Phaser.Scene {
   }
 
   private renderPlace(): void {
+    gameState.player.currentScene = "arrival";
+    gameState.player.currentLocation = undefined;
+    saveGame();
     this.children.removeAll();
     const place = places[gameState.introduction.currentPlace];
     const description =

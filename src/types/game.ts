@@ -13,6 +13,8 @@ export type ResourceId = "wood" | "stone" | "herb";
 export interface Player {
   name: string;
   level: number;
+  currentScene: "arrival" | "town" | "explore";
+  currentLocation?: LocationId;
 }
 
 export type ResourceInventory = Record<ResourceId, number>;

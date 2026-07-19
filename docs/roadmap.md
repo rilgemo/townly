@@ -36,6 +36,14 @@
 - [x] Reflect the repair permanently in Town Square and Town Hall descriptions.
 - [x] Avoid levels, construction menus, cost UI, and feature unlocks.
 
+## Persistence Foundation
+
+- [x] Save complete current GameState to versioned browser storage.
+- [x] Load automatically when Townly starts.
+- [x] Save automatically after meaningful state changes.
+- [x] Provide Save, Load, and Reset text actions.
+- [x] Reject invalid or outdated saves without crashing.
+
 ## Spatial Identity
 
 - [x] Establish Town Square as Willow Village's center.
@@ -70,7 +78,7 @@
 - [x] Let player observation reveal Forest and Mine access independently of NPC permission.
 - [x] Gate interface information behind player knowledge.
 - [x] Add the first visible Town Hall door restoration.
-- [ ] Add local save and load.
+- [x] Add local save and load.
 
 ## First Playable
 

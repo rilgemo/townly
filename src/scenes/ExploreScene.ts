@@ -3,6 +3,7 @@ import Phaser from "phaser";
 import { locations } from "../data/locations";
 import { resources } from "../data/resources";
 import { gameState } from "../state/GameState";
+import { saveGame } from "../systems/PersistenceSystem";
 import {
   completePlaceAction,
   getPlaceActions,
@@ -37,6 +38,9 @@ export class ExploreScene extends Phaser.Scene {
   }
 
   private renderPlace(): void {
+    gameState.player.currentScene = "explore";
+    gameState.player.currentLocation = this.locationId;
+    saveGame();
     this.children.removeAll();
     const location = locations[this.locationId];
     renderLayout(this, { nearbyPlaces: this.getNearbyPlaces() });

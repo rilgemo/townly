@@ -41,44 +41,49 @@ export interface GameState {
   resources: ResourceInventory;
 }
 
-export const gameState: GameState = {
-  player: {
-    name: "Traveler",
-    level: 1,
-  },
-  restoration: {
-    townHallDoorRepaired: false,
-  },
-  discoveredLocations: ["town", "plains", "lake"],
-  explorationCounts: {},
-  currentTownPlace: "townSquare",
-  villagePeople: {
-    woodsmanMet: false,
-    formerMinerMet: false,
-  },
-  knowledge: {
-    knowsVillage: false,
-    surveyedVillage: false,
-    knowsForest: false,
-    knowsMine: false,
-    knowsLake: false,
-    knowsPlains: false,
-    knowsWood: false,
-    knowsStone: false,
-    knowsHerb: false,
-  },
-  introduction: {
-    currentPlace: "outskirts",
-    lookedAround: false,
-    guardMet: false,
-    villageEntered: false,
-    chiefMet: false,
-    shelterReceived: false,
-    completed: false,
-  },
-  resources: {
-    wood: 0,
-    stone: 0,
-    herb: 0,
-  },
-};
+export function createInitialGameState(): GameState {
+  return {
+    player: {
+      name: "Traveler",
+      level: 1,
+      currentScene: "arrival",
+    },
+    restoration: {
+      townHallDoorRepaired: false,
+    },
+    discoveredLocations: ["town", "plains", "lake"],
+    explorationCounts: {},
+    currentTownPlace: "townSquare",
+    villagePeople: {
+      woodsmanMet: false,
+      formerMinerMet: false,
+    },
+    knowledge: {
+      knowsVillage: false,
+      surveyedVillage: false,
+      knowsForest: false,
+      knowsMine: false,
+      knowsLake: false,
+      knowsPlains: false,
+      knowsWood: false,
+      knowsStone: false,
+      knowsHerb: false,
+    },
+    introduction: {
+      currentPlace: "outskirts",
+      lookedAround: false,
+      guardMet: false,
+      villageEntered: false,
+      chiefMet: false,
+      shelterReceived: false,
+      completed: false,
+    },
+    resources: {
+      wood: 0,
+      stone: 0,
+      herb: 0,
+    },
+  };
+}
+
+export const gameState: GameState = createInitialGameState();

@@ -2,6 +2,7 @@ import Phaser from "phaser";
 
 import { npcs, type NpcId } from "../data/npcs";
 import { gameState } from "../state/GameState";
+import { saveGame } from "../systems/PersistenceSystem";
 import {
   canRepairTownHallDoor,
   repairTownHallDoor,
@@ -61,6 +62,9 @@ export class TownScene extends Phaser.Scene {
   }
 
   private renderTown(): void {
+    gameState.player.currentScene = "town";
+    gameState.player.currentLocation = undefined;
+    saveGame();
     this.children.removeAll();
     const place = townPlaces[gameState.currentTownPlace];
     renderLayout(this);

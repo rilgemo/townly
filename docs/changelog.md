@@ -26,6 +26,9 @@ Notable project changes are recorded here.
 - Conceptual Abandoned, Recognized, Restored, and Active place states without implementation.
 - First Restoration Moment replacing Town Hall levels with one persistent repaired door.
 - Town Square, Town Hall, and Village Chief responses reflecting the visible repair.
+- Versioned localStorage persistence for current player, world, knowledge, people, and restoration state.
+- Automatic startup loading, state-change saving, and Save/Load/Reset text actions.
+- Invalid save validation with safe fresh-game fallback.
 - Initial Phaser, Vite, and TypeScript project structure.
 - Starter town scene.
 - Clickable travel from Town to Forest, Mine, Plains, and Lake.
