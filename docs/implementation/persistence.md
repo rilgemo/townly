@@ -49,7 +49,7 @@ The interface also provides lightweight text actions:
 - Load Game
 - Reset Game
 
-Reset removes the local save and restores a fresh initial `GameState`.
+Reset asks for confirmation, removes the local save, restores a fresh initial `GameState`, and reloads the application so no active scene or timer survives. It exists for development testing and replaying Arrival; it is not presented as character deletion.
 
 ## Validation and Compatibility
 

@@ -157,8 +157,14 @@ function renderPersistenceActions(scene: Phaser.Scene): void {
     );
   });
   createTextAction(scene, columns.right, 486, "Reset Game", () => {
+    const confirmed = window.confirm(
+      "Return Willow Village to the moment before your arrival? This will clear all saved progress.",
+    );
+    if (!confirmed) {
+      return;
+    }
     resetGame();
-    scene.scene.start("arrival");
+    window.location.reload();
   });
 }
 

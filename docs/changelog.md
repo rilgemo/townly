@@ -29,6 +29,7 @@ Notable project changes are recorded here.
 - Versioned localStorage persistence for current player, world, knowledge, people, and restoration state.
 - Automatic startup loading, state-change saving, and Save/Load/Reset text actions.
 - Invalid save validation with safe fresh-game fallback.
+- Confirmed Reset Game flow that clears local progress and reloads a clean Arrival state.
 - Initial Phaser, Vite, and TypeScript project structure.
 - Starter town scene.
 - Clickable travel from Town to Forest, Mine, Plains, and Lake.
