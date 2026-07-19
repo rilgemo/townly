@@ -18,16 +18,18 @@ Notable project changes are recorded here.
 - Spatial Identity milestone with Town Square as a four-direction village center.
 - Separate people, local actions, and directional travel presentation.
 - Deep Forest reached through Forest rather than a global location list.
+- Meaningful Actions milestone replacing fixed location payouts with concrete choices.
+- Separate fallen Wood, wild Herb, and Mine rubble interactions.
 - Initial Phaser, Vite, and TypeScript project structure.
 - Starter town scene.
 - Clickable travel from Town to Forest, Mine, Plains, and Lake.
 - Location data and a shared exploration scene with return travel.
-- Ten-second Forest and Mine exploration actions with resource rewards.
+- Ten-second Forest and Mine material-finding actions.
 - In-memory player and Wood, Stone, and Herb state shown in Town.
 - Town Hall repair costing 10 Wood and 5 Stone, raising Town to level 2.
 - Minimalist text-driven interface replacing the prototype map cards.
 - Lightweight emoji anchors for resources, locations, and the Town Hall.
-- Deep Forest discovery after three completed Forest explorations.
+- Deep Forest discovery after three completed Forest actions.
 - Discovery feedback in the exploration log and unlocked Town location list.
 - First-time arrival flow through the Village Guard and Village Chief.
 - Temporary shelter and basic gathering introduction.

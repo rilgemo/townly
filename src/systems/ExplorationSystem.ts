@@ -1,46 +1,63 @@
-import { addResources } from "./ResourceSystem";
 import { gameState } from "../state/GameState";
-import type { LocationId, ResourceReward } from "../types/game";
+import type { LocationId, ResourceAmounts } from "../types/game";
+import { addResources } from "./ResourceSystem";
 
-export interface Exploration {
+export interface PlaceAction {
+  id: string;
+  label: string;
   durationSeconds: number;
-  reward: ResourceReward;
+  findings: ResourceAmounts;
+  resultText: string;
 }
 
-export interface ExplorationResult {
-  reward: ResourceReward;
+export interface PlaceActionResult {
+  findings: ResourceAmounts;
+  resultText: string;
   discoveredLocation?: LocationId;
 }
 
-const explorations: Partial<Record<LocationId, Exploration>> = {
-  forest: {
-    durationSeconds: 10,
-    reward: { wood: 3, herb: 1 },
-  },
-  mine: {
-    durationSeconds: 10,
-    reward: { stone: 2 },
-  },
+const placeActions: Partial<Record<LocationId, PlaceAction[]>> = {
+  forest: [
+    {
+      id: "fallen-branches",
+      label: "Search among the fallen branches",
+      durationSeconds: 10,
+      findings: { wood: 3 },
+      resultText:
+        "Beneath damp leaves, you find fallen branches dry enough to carry back.",
+    },
+    {
+      id: "wild-plants",
+      label: "Examine the wild plants",
+      durationSeconds: 10,
+      findings: { herb: 1 },
+      resultText:
+        "Among the undergrowth, you recognize a small plant that may be useful.",
+    },
+  ],
+  mine: [
+    {
+      id: "loose-rubble",
+      label: "Search through the loose rubble",
+      durationSeconds: 10,
+      findings: { stone: 2 },
+      resultText:
+        "Near the collapsed wall, you collect several solid pieces of usable stone.",
+    },
+  ],
 };
 
-export function getExploration(locationId: LocationId): Exploration | undefined {
-  return explorations[locationId];
+export function getPlaceActions(locationId: LocationId): PlaceAction[] {
+  return placeActions[locationId] ?? [];
 }
 
-export function completeExploration(
+export function completePlaceAction(
   locationId: LocationId,
-  exploration: Exploration,
-): ExplorationResult {
-  addResources(exploration.reward);
-  if ((exploration.reward.wood ?? 0) > 0) {
-    gameState.knowledge.knowsWood = true;
-  }
-  if ((exploration.reward.stone ?? 0) > 0) {
-    gameState.knowledge.knowsStone = true;
-  }
-  if ((exploration.reward.herb ?? 0) > 0) {
-    gameState.knowledge.knowsHerb = true;
-  }
+  action: PlaceAction,
+): PlaceActionResult {
+  addResources(action.findings);
+  revealFoundMaterials(action.findings);
+
   gameState.explorationCounts[locationId] =
     (gameState.explorationCounts[locationId] ?? 0) + 1;
 
@@ -55,7 +72,20 @@ export function completeExploration(
   }
 
   return {
-    reward: exploration.reward,
+    findings: action.findings,
+    resultText: action.resultText,
     discoveredLocation,
   };
+}
+
+function revealFoundMaterials(findings: ResourceAmounts): void {
+  if ((findings.wood ?? 0) > 0) {
+    gameState.knowledge.knowsWood = true;
+  }
+  if ((findings.stone ?? 0) > 0) {
+    gameState.knowledge.knowsStone = true;
+  }
+  if ((findings.herb ?? 0) > 0) {
+    gameState.knowledge.knowsHerb = true;
+  }
 }

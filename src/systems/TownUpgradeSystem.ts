@@ -1,8 +1,8 @@
 import { gameState } from "../state/GameState";
-import type { ResourceReward } from "../types/game";
+import type { ResourceAmounts } from "../types/game";
 import { hasResources, spendResources } from "./ResourceSystem";
 
-export const townHallUpgradeCost: ResourceReward = {
+export const townHallUpgradeCost: ResourceAmounts = {
   wood: 10,
   stone: 5,
 };

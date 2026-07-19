@@ -4,16 +4,13 @@ import { locations } from "../data/locations";
 import { resources } from "../data/resources";
 import { gameState } from "../state/GameState";
 import {
-  completeExploration,
-  getExploration,
-  type Exploration,
+  completePlaceAction,
+  getPlaceActions,
+  type PlaceAction,
+  type PlaceActionResult,
 } from "../systems/ExplorationSystem";
-import type { LocationId, ResourceId, ResourceReward } from "../types/game";
-import {
-  columns,
-  createTextAction,
-  renderLayout,
-} from "../ui/layout";
+import type { LocationId, ResourceAmounts, ResourceId } from "../types/game";
+import { columns, createTextAction, renderLayout } from "../ui/layout";
 import { colors, fonts } from "../ui/theme";
 
 interface ExploreSceneData {
@@ -23,7 +20,7 @@ interface ExploreSceneData {
 export class ExploreScene extends Phaser.Scene {
   private locationId: LocationId = "forest";
   private message = "You take in your surroundings.";
-  private explorationActive = false;
+  private activeActionId?: string;
 
   constructor() {
     super("explore");
@@ -32,7 +29,7 @@ export class ExploreScene extends Phaser.Scene {
   init(data: ExploreSceneData): void {
     this.locationId = data.locationId;
     this.message = "You take in your surroundings.";
-    this.explorationActive = false;
+    this.activeActionId = undefined;
   }
 
   create(): void {
@@ -42,9 +39,7 @@ export class ExploreScene extends Phaser.Scene {
   private renderPlace(): void {
     this.children.removeAll();
     const location = locations[this.locationId];
-    renderLayout(this, {
-      nearbyPlaces: this.getNearbyPlaces(),
-    });
+    renderLayout(this, { nearbyPlaces: this.getNearbyPlaces() });
 
     this.add.text(columns.center, 60, `${location.symbol} ${location.name}`, {
       color: colors.primary,
@@ -57,10 +52,10 @@ export class ExploreScene extends Phaser.Scene {
       fontSize: "15px",
     });
 
-    this.renderActions();
+    this.renderChoices();
 
     this.add.text(columns.center, 408, this.message, {
-      color: this.explorationActive ? colors.secondary : colors.muted,
+      color: this.activeActionId ? colors.secondary : colors.muted,
       fontFamily: fonts.body,
       fontSize: "12px",
       wordWrap: { width: 390 },
@@ -68,9 +63,7 @@ export class ExploreScene extends Phaser.Scene {
     });
   }
 
-  private renderActions(): void {
-    const exploration = getExploration(this.locationId);
-
+  private renderChoices(): void {
     if (this.locationId === "deepForest") {
       createTextAction(this, columns.center, 228, "Follow the hidden path back to the forest", () => {
         this.scene.start("explore", { locationId: "forest" });
@@ -78,132 +71,114 @@ export class ExploreScene extends Phaser.Scene {
       return;
     }
 
-    if (exploration) {
-      const reward = this.formatRewardPreview(exploration.reward);
+    const actions = getPlaceActions(this.locationId);
+    actions.forEach((action, index) => {
+      const isActive = this.activeActionId === action.id;
       createTextAction(
         this,
         columns.center,
-        228,
-        this.explorationActive
-          ? "Searching..."
-          : `${this.getSearchAction()} (${exploration.durationSeconds}s, ${reward})`,
-        () => this.beginExploration(exploration),
-        !this.explorationActive,
+        228 + index * 30,
+        isActive ? "You are occupied..." : action.label,
+        () => this.beginPlaceAction(action),
+        this.activeActionId === undefined,
       );
-    }
+    });
 
-    let returnY = 270;
+    let nextY = 228 + actions.length * 30;
     if (
       this.locationId === "forest" &&
       gameState.discoveredLocations.includes("deepForest")
     ) {
-      createTextAction(this, columns.center, 270, "Follow the hidden path deeper", () => {
-        this.scene.start("explore", { locationId: "deepForest" });
-      });
-      returnY = 304;
+      createTextAction(
+        this,
+        columns.center,
+        nextY,
+        "Follow the hidden path deeper",
+        () => this.scene.start("explore", { locationId: "deepForest" }),
+        this.activeActionId === undefined,
+      );
+      nextY += 34;
     }
 
-    const returnLabel =
-      this.locationId === "forest"
-        ? "Follow the path south to the village edge"
-        : this.locationId === "mine"
-          ? "Leave the passage and walk west"
-          : "Walk back toward Willow Village";
-    createTextAction(this, columns.center, returnY, returnLabel, () => {
-      this.scene.start("town");
-    });
+    createTextAction(
+      this,
+      columns.center,
+      nextY,
+      this.getReturnLabel(),
+      () => this.scene.start("town"),
+      this.activeActionId === undefined,
+    );
   }
 
-  private beginExploration(exploration: Exploration): void {
-    this.explorationActive = true;
-    let secondsRemaining = exploration.durationSeconds;
-    this.message = `Searching... ${secondsRemaining}s remaining`;
+  private beginPlaceAction(action: PlaceAction): void {
+    this.activeActionId = action.id;
+    let secondsRemaining = action.durationSeconds;
+    this.message = `You take your time. ${secondsRemaining}s remaining.`;
     this.renderPlace();
 
     this.time.addEvent({
       delay: 1000,
-      repeat: exploration.durationSeconds - 1,
+      repeat: action.durationSeconds - 1,
       callback: () => {
         secondsRemaining -= 1;
         if (secondsRemaining > 0) {
-          this.message = `Searching... ${secondsRemaining}s remaining`;
+          this.message = `You continue carefully. ${secondsRemaining}s remaining.`;
           this.renderPlace();
           return;
         }
 
-        const result = completeExploration(this.locationId, exploration);
-        this.explorationActive = false;
-        this.message = this.formatExplorationResult(
-          result.reward,
-          result.discoveredLocation,
-        );
+        const result = completePlaceAction(this.locationId, action);
+        this.activeActionId = undefined;
+        this.message = this.describeResult(result);
         this.renderPlace();
       },
     });
   }
 
-  private formatExplorationResult(
-    reward: ResourceReward,
-    discoveredLocation?: LocationId,
-  ): string {
-    const lines = [`Obtained ${this.formatReward(reward)}.`];
-    if (discoveredLocation) {
+  private describeResult(result: PlaceActionResult): string {
+    const lines = [result.resultText];
+    const findings = this.formatFindings(result.findings);
+    if (findings) {
+      lines.push(`You carry back ${findings}.`);
+    }
+    if (result.discoveredLocation) {
       lines.push(
-        "You discovered a hidden path.",
-        `The hidden path now feels familiar: ${locations[discoveredLocation].name}`,
+        "Repeated visits reveal a path hidden beneath the undergrowth.",
+        `You will remember the way to ${locations[result.discoveredLocation].name}.`,
       );
     }
     return lines.join("\n");
   }
 
-  private formatReward(reward: ResourceReward): string {
-    return Object.entries(reward)
+  private formatFindings(findings: ResourceAmounts): string {
+    return Object.entries(findings)
       .map(
         ([resourceId, amount]) =>
           `${amount} ${resources[resourceId as ResourceId].name}`,
       )
-      .join(", ");
+      .join(" and ");
   }
 
-  private formatRewardPreview(reward: ResourceReward): string {
-    const knownRewards = Object.entries(reward).filter(([resourceId]) => {
-      if (resourceId === "wood") {
-        return gameState.knowledge.knowsWood;
-      }
-      if (resourceId === "stone") {
-        return gameState.knowledge.knowsStone;
-      }
-      return gameState.knowledge.knowsHerb;
-    });
-
-    if (knownRewards.length === 0) {
-      return "unknown result";
+  private getReturnLabel(): string {
+    if (this.locationId === "forest") {
+      return "Follow the path south to the village edge";
     }
-
-    const knownText = this.formatReward(Object.fromEntries(knownRewards));
-    return knownRewards.length < Object.keys(reward).length
-      ? `${knownText}, something unknown`
-      : knownText;
+    if (this.locationId === "mine") {
+      return "Leave the passage and walk west";
+    }
+    return "Walk back toward Willow Village";
   }
 
   private getNearbyPlaces(): string[] {
-    const nearby = ["Townly"];
     if (
       this.locationId === "forest" &&
       gameState.discoveredLocations.includes("deepForest")
     ) {
-      nearby.push("Deep Forest");
+      return ["Village Edge", "Deep Forest"];
     }
-    return nearby;
-  }
-
-  private getSearchAction(): string {
-    if (this.locationId === "forest") {
-      return "Search beneath the trees";
+    if (this.locationId === "deepForest") {
+      return ["Forest"];
     }
-    if (this.locationId === "mine") {
-      return "Search the side passage";
-    }
-    return "Search the area";
+    return ["Willow Village"];
   }
 }

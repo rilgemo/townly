@@ -17,7 +17,7 @@ export interface Player {
 
 export type ResourceInventory = Record<ResourceId, number>;
 
-export type ResourceReward = Partial<ResourceInventory>;
+export type ResourceAmounts = Partial<ResourceInventory>;
 
 export interface Location {
   id: LocationId;

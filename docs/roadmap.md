@@ -30,6 +30,13 @@
 - [x] Separate people, local actions, and travel.
 - [x] Connect Deep Forest spatially through Forest.
 
+## Meaningful Actions
+
+- [x] Replace fixed Forest findings with separate branch and plant actions.
+- [x] Replace fixed Mine findings with rubble searching.
+- [x] Explain material acquisition through narrative results.
+- [x] Preserve existing restoration resources without adding tools.
+
 ## Prototype
 
 - [x] Establish the location navigation loop.
