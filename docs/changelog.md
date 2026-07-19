@@ -20,6 +20,8 @@ Notable project changes are recorded here.
 - Deep Forest reached through Forest rather than a global location list.
 - Meaningful Actions milestone replacing fixed location payouts with concrete choices.
 - Separate fallen Wood, wild Herb, and Mine rubble interactions.
+- Shelter Identity milestone establishing an empty lived space rather than a storage or upgrade menu.
+- Simple shelter observation and rest actions without furniture or housing systems.
 - Initial Phaser, Vite, and TypeScript project structure.
 - Starter town scene.
 - Clickable travel from Town to Forest, Mine, Plains, and Lake.

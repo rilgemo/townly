@@ -30,7 +30,7 @@ const townPlaces: Record<typeof gameState.currentTownPlace, TownPlace> = {
   },
   shelter: {
     name: "Your Shelter",
-    description: "A small room near the square. It is plain, dry, and quiet.\nSomeone has left a folded blanket on the narrow bed.",
+    description: "A small abandoned room near the square. The floorboards are old,\nthe walls are worn, and the corners stand empty. It is dry enough to use.",
     npcIds: [],
   },
   villageEdge: {
@@ -145,9 +145,14 @@ export class TownScene extends Phaser.Scene {
     }
 
     if (gameState.currentTownPlace === "shelter") {
-      createTextAction(this, columns.center, y, "Sit quietly for a while", () => {
+      createTextAction(this, columns.center, y, "Look around the empty room", () => {
         this.message =
-          "The room is still unfamiliar, but village sounds carry through the window.";
+          "Dust rests along the old floor. The room holds no furniture, only quiet and empty space.";
+        this.renderTown();
+      });
+      createTextAction(this, columns.center, y + 28, "Rest against the wall", () => {
+        this.message =
+          "You sit against the worn wall for a while. Village sounds drift through the window.";
         this.renderTown();
       });
       return;

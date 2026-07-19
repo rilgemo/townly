@@ -42,6 +42,8 @@ This document records gameplay rules that are implemented or approved for implem
 - Searching fallen branches provides Wood without implying tree cutting.
 - Examining wild plants provides Herb separately from Wood gathering.
 - Searching Mine rubble provides Stone without treating the Mine itself as a reward source.
+- Your Shelter is an empty living place with simple observation, rest, and leave actions.
+- Shelter has no storage, furniture, crafting, capacity, or level behavior.
 
 ## Design Principle
 

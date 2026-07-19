@@ -37,6 +37,13 @@
 - [x] Explain material acquisition through narrative results.
 - [x] Preserve existing restoration resources without adding tools.
 
+## Shelter Identity
+
+- [x] Present Your Shelter as an abandoned but usable room.
+- [x] Keep shelter interactions limited to looking, resting, and leaving.
+- [x] Preserve room for meaningful future objects without implementing systems.
+- [x] Reject storage, furniture, crafting, housing levels, tools, and time.
+
 ## Prototype
 
 - [x] Establish the location navigation loop.
