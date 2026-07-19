@@ -20,7 +20,7 @@ interface TownPlace {
 const townPlaces: Record<typeof gameState.currentTownPlace, TownPlace> = {
   townSquare: {
     name: "Town Square",
-    description: "Willow Village gathers around this worn stone square.\nPaths leave between old buildings in every direction.",
+    description: "Cooking smoke rises above a few roofs. Small gardens fill gaps between aging homes.\nNeighbors mend old tools and share what remains from carefully kept supplies.",
     npcIds: ["guard"],
   },
   townHall: {
@@ -310,12 +310,12 @@ export class TownScene extends Phaser.Scene {
       gameState.villagePeople.woodsmanMet = true;
       this.message = gameState.restoration.townHallDoorRepaired
         ? 'Old Woodsman: "I saw the hall door close cleanly this morning. A small thing, perhaps—but small things are how a village begins to look cared for again."'
-        : 'Old Woodsman: "That forest once kept every hearth warm. When the village weakened, the path was left to disappear."';
+        : 'Old Woodsman: "That forest once kept every hearth warm. I cannot work it as I did, but I remember which wood burns clean and which paths stay dry."';
     } else {
       gameState.villagePeople.formerMinerMet = true;
       this.message = gameState.restoration.townHallDoorRepaired
         ? 'Former Miner: "That repaired door catches the eye. Reminds people this place is worn, not abandoned."'
-        : 'Former Miner: "Stone from these tunnels built half the village. After the collapse, there were too few of us to clear them."';
+        : 'Former Miner: "Stone from these tunnels built half the village. I watch the old entrance so its story does not disappear with the people who worked there."';
     }
     this.renderTown();
   }
@@ -358,7 +358,7 @@ export class TownScene extends Phaser.Scene {
     if (gameState.villagePeople.woodsmanMet && gameState.villagePeople.formerMinerMet) {
       return 'Village Chief: "You are beginning to understand what this village once was."';
     }
-    return 'Village Chief: "I hope the room has been comfortable enough. You are welcome here while you find your place."';
+    return 'Village Chief: "We have lasted on small gardens, careful stores, and neighbors sharing what they can. I keep the records so we do not forget how."';
   }
 
   private getPlaceDescription(place: TownPlace): string {

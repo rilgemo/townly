@@ -18,18 +18,18 @@ export const npcs: Record<NpcId, Npc> = {
     id: "chief",
     icon: "👴",
     name: "Village Chief",
-    description: "Maintains the village and its old records.",
+    description: "Keeps the village records, shared stores, and long memory.",
   },
   woodsman: {
     id: "woodsman",
     icon: "🪓",
     name: "Old Woodsman",
-    description: "Remembers when the forest path still sustained the village.",
+    description: "Once supplied firewood; now preserves knowledge of the forest.",
   },
   formerMiner: {
     id: "formerMiner",
     icon: "⛏",
     name: "Former Miner",
-    description: "Keeps watch near tunnels abandoned years ago.",
+    description: "Once cut village stone; now keeps the mine's history from vanishing.",
   },
 };

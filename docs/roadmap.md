@@ -43,6 +43,13 @@
 - [x] Add distinct Chief, Old Woodsman, and Former Miner observations.
 - [x] Use only the existing door restoration state.
 
+## Village Life Foundation
+
+- [x] Show ordinary signs that Willow Village remains inhabited.
+- [x] Ground survival in stores, gardens, mutual help, and preserved knowledge.
+- [x] Clarify the Chief, Old Woodsman, and Former Miner's continuity roles.
+- [x] Avoid simulation, schedules, economy, farming, and new resources.
+
 ## Persistence Foundation
 
 - [x] Save complete current GameState to versioned browser storage.

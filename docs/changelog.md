@@ -28,6 +28,8 @@ Notable project changes are recorded here.
 - Town Square, Town Hall, and Village Chief responses reflecting the visible repair.
 - Restoration Recognition through distinct Old Woodsman and Former Miner observations.
 - Refined Town Square and Town Hall descriptions emphasizing care rather than completion.
+- Village Life Foundation grounding Willow Village in cooking, gardens, repair, and mutual help.
+- Existing resident descriptions reframed around records and preserved practical knowledge.
 - Versioned localStorage persistence for current player, world, knowledge, people, and restoration state.
 - Automatic startup loading, state-change saving, and Save/Load/Reset text actions.
 - Invalid save validation with safe fresh-game fallback.
