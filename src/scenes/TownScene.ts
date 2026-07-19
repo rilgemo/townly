@@ -310,12 +310,12 @@ export class TownScene extends Phaser.Scene {
       gameState.villagePeople.woodsmanMet = true;
       this.message = gameState.restoration.townHallDoorRepaired
         ? 'Old Woodsman: "I saw the hall door close cleanly this morning. A small thing, perhaps—but small things are how a village begins to look cared for again."'
-        : 'Old Woodsman: "That forest once kept every hearth warm. I cannot work it as I did, but I remember which wood burns clean and which paths stay dry."';
+        : 'Old Woodsman: "That forest once kept every hearth warm. There was a workshop too—hands that could turn sound wood into stools, handles, and shutters. I remember enough to know what we have lost."';
     } else {
       gameState.villagePeople.formerMinerMet = true;
       this.message = gameState.restoration.townHallDoorRepaired
         ? 'Former Miner: "That repaired door catches the eye. Reminds people this place is worn, not abandoned."'
-        : 'Former Miner: "Stone from these tunnels built half the village. I watch the old entrance so its story does not disappear with the people who worked there."';
+        : 'Former Miner: "Stone from these tunnels built half the village. The smith kept our picks and garden tools sound. Now I watch the old entrance so both kinds of knowledge are not forgotten."';
     }
     this.renderTown();
   }
@@ -356,7 +356,7 @@ export class TownScene extends Phaser.Scene {
       return 'Village Chief: "You have learned paths even some of us had forgotten. Willow Village is fortunate you stayed."';
     }
     if (gameState.villagePeople.woodsmanMet && gameState.villagePeople.formerMinerMet) {
-      return 'Village Chief: "You are beginning to understand what this village once was."';
+      return 'Village Chief: "You are beginning to understand what this village once was—workshops in use, fuller fields, and a warm room for travelers. We remember the shape of that life."';
     }
     return 'Village Chief: "We have lasted on small gardens, careful stores, and neighbors sharing what they can. I keep the records so we do not forget how."';
   }

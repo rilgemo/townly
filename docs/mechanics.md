@@ -24,6 +24,7 @@ This document records gameplay rules that are implemented or approved for implem
 - Town Square, Town Hall, and resident responses reflect the repaired door through the existing restoration flag.
 - Town Square descriptions establish ongoing village life through cooking, small gardens, tool repair, and shared supplies.
 - Existing residents preserve records and practical memory without acting as schedules, professions, or production systems.
+- Woodworking, metalworking, food production, and hospitality are documented restoration directions only; no capability state system is implemented.
 - Completing three Forest actions reveals the hidden route to Deep Forest.
 - Deep Forest is added to the Town location list when discovered.
 - A new player arrives outside the village, meets the Village Guard, and is admitted through the gate.

@@ -50,6 +50,13 @@
 - [x] Clarify the Chief, Old Woodsman, and Former Miner's continuity roles.
 - [x] Avoid simulation, schedules, economy, farming, and new resources.
 
+## Restoration Paths Foundation
+
+- [x] Define woodworking, metalworking, food production, and hospitality as recovered village capabilities.
+- [x] Describe Lost, Remembered, Restored, and Active as narrative design states.
+- [x] Connect existing residents to the village's practical history.
+- [x] Avoid buildings, production, economy, recruitment, skills, and capability architecture.
+
 ## Persistence Foundation
 
 - [x] Save complete current GameState to versioned browser storage.
