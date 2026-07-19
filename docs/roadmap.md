@@ -36,6 +36,13 @@
 - [x] Reflect the repair permanently in Town Square and Town Hall descriptions.
 - [x] Avoid levels, construction menus, cost UI, and feature unlocks.
 
+## Restoration Recognition
+
+- [x] Let Town Square reflect the changed Town Hall entrance.
+- [x] Let Town Hall feel worn but usable after repair.
+- [x] Add distinct Chief, Old Woodsman, and Former Miner observations.
+- [x] Use only the existing door restoration state.
+
 ## Persistence Foundation
 
 - [x] Save complete current GameState to versioned browser storage.

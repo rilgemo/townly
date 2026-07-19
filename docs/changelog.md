@@ -26,6 +26,8 @@ Notable project changes are recorded here.
 - Conceptual Abandoned, Recognized, Restored, and Active place states without implementation.
 - First Restoration Moment replacing Town Hall levels with one persistent repaired door.
 - Town Square, Town Hall, and Village Chief responses reflecting the visible repair.
+- Restoration Recognition through distinct Old Woodsman and Former Miner observations.
+- Refined Town Square and Town Hall descriptions emphasizing care rather than completion.
 - Versioned localStorage persistence for current player, world, knowledge, people, and restoration state.
 - Automatic startup loading, state-change saving, and Save/Load/Reset text actions.
 - Invalid save validation with safe fresh-game fallback.

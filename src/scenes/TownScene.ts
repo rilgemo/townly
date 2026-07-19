@@ -308,12 +308,14 @@ export class TownScene extends Phaser.Scene {
       this.message = this.getChiefMessage();
     } else if (npcId === "woodsman") {
       gameState.villagePeople.woodsmanMet = true;
-      this.message =
-        'Old Woodsman: "That forest once kept every hearth warm. When the village weakened, the path was left to disappear."';
+      this.message = gameState.restoration.townHallDoorRepaired
+        ? 'Old Woodsman: "I saw the hall door close cleanly this morning. A small thing, perhaps—but small things are how a village begins to look cared for again."'
+        : 'Old Woodsman: "That forest once kept every hearth warm. When the village weakened, the path was left to disappear."';
     } else {
       gameState.villagePeople.formerMinerMet = true;
-      this.message =
-        'Former Miner: "Stone from these tunnels built half the village. After the collapse, there were too few of us to clear them."';
+      this.message = gameState.restoration.townHallDoorRepaired
+        ? 'Former Miner: "That repaired door catches the eye. Reminds people this place is worn, not abandoned."'
+        : 'Former Miner: "Stone from these tunnels built half the village. After the collapse, there were too few of us to clear them."';
     }
     this.renderTown();
   }
@@ -362,13 +364,13 @@ export class TownScene extends Phaser.Scene {
   private getPlaceDescription(place: TownPlace): string {
     if (gameState.currentTownPlace === "townSquare") {
       return gameState.restoration.townHallDoorRepaired
-        ? `${place.description}\nAcross the square, the Town Hall door sits straight in its frame.`
-        : `${place.description}\nAcross the square, the Town Hall entrance hangs crooked and worn.`;
+        ? `${place.description}\nThe Town Hall remains old, but its mended door makes it feel less forgotten.`
+        : `${place.description}\nThe Town Hall entrance hangs crooked, showing years of quiet neglect.`;
     }
     if (gameState.currentTownPlace === "townHall") {
       return gameState.restoration.townHallDoorRepaired
-        ? `${place.description}\nThe entrance door closes cleanly now, showing the first clear sign of care.`
-        : `${place.description}\nThe heavy entrance door hangs loose, scraping against the stone threshold.`;
+        ? `${place.description}\nThe door closes normally now. The hall remains worn, but it is usable and cared for.`
+        : `${place.description}\nThe frame is broken and the heavy door scrapes the threshold instead of closing.`;
     }
     return place.description;
   }

@@ -21,6 +21,7 @@ This document records gameplay rules that are implemented or approved for implem
 - Resources remain in memory for the current browser session.
 - Mending the Town Hall entrance uses 10 Wood and 5 Stone from existing resource state.
 - The repair changes the door description permanently; it does not create a building level or feature unlock.
+- Town Square, Town Hall, and resident responses reflect the repaired door through the existing restoration flag.
 - Completing three Forest actions reveals the hidden route to Deep Forest.
 - Deep Forest is added to the Town location list when discovered.
 - A new player arrives outside the village, meets the Village Guard, and is admitted through the gate.
