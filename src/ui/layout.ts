@@ -55,55 +55,32 @@ export function createTextAction(
 }
 
 function renderPlayerContext(scene: Phaser.Scene): void {
-  scene.add.text(columns.left, 28, "You", {
-    color: colors.primary,
-    fontFamily: fonts.title,
-    fontSize: "22px",
-  });
-
-  scene.add.text(
-    columns.left,
-    76,
-    gameState.knowledge.knowsVillage
-      ? `${gameState.player.name}.\nA traveler in Willow Village.`
-      : "A stranger.\nYou remember little of this place.",
-    {
-      ...bodyStyle(),
-      lineSpacing: 7,
-    },
+  scene.add.text(columns.left, 48, "CARRYING", subtleHeading());
+  const carriedResourceIds = resourceIds.filter(
+    (resourceId) => isResourceKnown(resourceId) && getResourceAmount(resourceId) > 0,
   );
-
-  if (gameState.introduction.shelterReceived) {
-    scene.add.text(
-      columns.left,
-      136,
-      "You have a place to rest.",
-      bodyStyle(colors.muted),
-    );
-  }
-
-  const knownResourceIds = resourceIds.filter(isResourceKnown);
-  if (knownResourceIds.length > 0) {
-    scene.add.text(columns.left, 196, "BELONGINGS", subtleHeading());
-    knownResourceIds.forEach((resourceId, index) => {
+  if (carriedResourceIds.length === 0) {
+    scene.add.text(columns.left, 76, "Nothing", bodyStyle(colors.muted));
+  } else {
+    carriedResourceIds.forEach((resourceId, index) => {
       const resource = resources[resourceId];
       scene.add.text(
         columns.left,
-        224 + index * 24,
+        76 + index * 24,
         `${resource.symbol} ${resource.name.padEnd(8)} ${getResourceAmount(resourceId)}`,
         bodyStyle(),
       );
     });
   }
 
-  const knowledge = getKnownKnowledge();
-  if (knowledge.length > 0) {
-    scene.add.text(columns.left, 330, "THINGS YOU'VE LEARNED", subtleHeading());
-    knowledge.forEach((item, index) => {
+  const knownPlaces = getKnownPlaces();
+  if (knownPlaces.length > 0) {
+    scene.add.text(columns.left, 190, "KNOWN PLACES", subtleHeading());
+    knownPlaces.forEach((place, index) => {
       scene.add.text(
         columns.left,
-        358 + index * 22,
-        `• ${item}`,
+        218 + index * 22,
+        `• ${place}`,
         bodyStyle(colors.muted),
       );
     });
@@ -111,14 +88,13 @@ function renderPlayerContext(scene: Phaser.Scene): void {
 }
 
 function renderWorldContext(scene: Phaser.Scene, nearbyPlaces: string[]): void {
-  scene.add.text(columns.right, 36, "Morning", {
-    color: colors.primary,
-    fontFamily: fonts.title,
-    fontSize: "18px",
+  scene.add.text(columns.right, 48, getEnvironmentalContext(), {
+    ...bodyStyle(colors.muted),
+    lineSpacing: 8,
+    wordWrap: { width: 230 },
   });
-  scene.add.text(columns.right, 68, "The sky is clear.", bodyStyle(colors.muted));
 
-  renderPersistenceActions(scene);
+  renderSettingsEntry(scene);
 
   if (nearbyPlaces.length === 0) {
     return;
@@ -126,20 +102,21 @@ function renderWorldContext(scene: Phaser.Scene, nearbyPlaces: string[]): void {
 
   scene.add.text(
     columns.right,
-    160,
-    "You could find your way to",
-    bodyStyle(colors.muted),
+    176,
+    "PATHS YOU RECOGNIZE",
+    subtleHeading(),
   );
   nearbyPlaces.slice(0, 4).forEach((place, index) => {
-    scene.add.text(columns.right, 194 + index * 26, `• ${place}`, bodyStyle());
+    scene.add.text(columns.right, 204 + index * 26, `• ${place}`, bodyStyle());
   });
 }
 
-function renderPersistenceActions(scene: Phaser.Scene): void {
-  createTextAction(scene, columns.right, 430, "Save Game", () => {
+function renderSettingsEntry(scene: Phaser.Scene): void {
+  const controls: Phaser.GameObjects.Text[] = [];
+  const saveAction = createTextAction(scene, columns.right, 430, "Save", () => {
     saveGame();
   });
-  createTextAction(scene, columns.right, 458, "Load Game", () => {
+  const loadAction = createTextAction(scene, columns.right, 458, "Load", () => {
     if (!loadGame()) {
       return;
     }
@@ -152,11 +129,9 @@ function renderPersistenceActions(scene: Phaser.Scene): void {
       });
       return;
     }
-    scene.scene.start(
-      gameState.introduction.completed ? "town" : "arrival",
-    );
+    scene.scene.start(gameState.introduction.completed ? "town" : "arrival");
   });
-  createTextAction(scene, columns.right, 486, "Reset Game", () => {
+  const resetAction = createTextAction(scene, columns.right, 486, "Begin again", () => {
     const confirmed = window.confirm(
       "Return Willow Village to the moment before your arrival? This will clear all saved progress.",
     );
@@ -166,35 +141,76 @@ function renderPersistenceActions(scene: Phaser.Scene): void {
     resetGame();
     window.location.reload();
   });
+  controls.push(saveAction, loadAction, resetAction);
+  controls.forEach((control) => control.setVisible(false).disableInteractive());
+
+  let settingsOpen = false;
+  createTextAction(scene, columns.right, 514, "Settings", () => {
+    settingsOpen = !settingsOpen;
+    controls.forEach((control) => {
+      control.setVisible(settingsOpen);
+      if (settingsOpen) {
+        control.setInteractive({ useHandCursor: true });
+      } else {
+        control.disableInteractive();
+      }
+    });
+  });
 }
 
-function getKnownKnowledge(): string[] {
-  const knowledge: string[] = [];
+function getKnownPlaces(): string[] {
+  const places: string[] = [];
   if (gameState.knowledge.knowsVillage) {
-    knowledge.push("Willow Village");
+    places.push("Willow Village");
   }
   if (gameState.introduction.shelterReceived) {
-    knowledge.push("Your shelter");
+    places.push("Your shelter");
   }
   if (gameState.knowledge.knowsForest) {
-    knowledge.push("Forest path");
+    places.push("Forest path");
   }
   if (gameState.knowledge.knowsMine) {
-    knowledge.push("Mine side passage");
+    places.push("Mine side passage");
   }
   if (gameState.knowledge.knowsLake) {
-    knowledge.push("Western lakeshore");
+    places.push("Western lakeshore");
   }
   if (gameState.knowledge.knowsPlains) {
-    knowledge.push("Road to the southern plains");
+    places.push("Road to the southern plains");
   }
   if (gameState.discoveredLocations.includes("deepForest")) {
-    knowledge.push("Hidden forest path");
+    places.push("Hidden forest path");
   }
-  if (gameState.restoration.townHallDoorRepaired) {
-    knowledge.push("Mended Town Hall door");
+  return places;
+}
+
+function getEnvironmentalContext(): string {
+  if (!gameState.introduction.completed) {
+    return "The road is quiet.\nA faint breeze moves through the grass.";
   }
-  return knowledge;
+  if (gameState.player.currentScene === "explore") {
+    return "Willow Village lies behind you.\nThe sounds here belong to wilder ground.";
+  }
+  if (gameState.currentTownPlace === "shelter") {
+    return "Village sounds reach the empty room through its worn walls.";
+  }
+  if (gameState.currentTownPlace === "townHall") {
+    return gameState.restoration.townHallDoorRepaired
+      ? "The old hall remains worn, but its door closes cleanly now."
+      : "Dust and old paper mingle with the scent of the small fire.";
+  }
+  if (gameState.currentTownPlace === "villageEdge") {
+    return "Leaves stir beyond the last cottages. The air carries the scent of damp wood.";
+  }
+  if (gameState.currentTownPlace === "mineEntrance") {
+    return "Cool air slips between fallen stones. The hillside is otherwise still.";
+  }
+  if (gameState.currentTownPlace === "southRoad") {
+    return "The village grows quieter behind the gate. Open country stretches south.";
+  }
+  return gameState.restoration.townHallDoorRepaired
+    ? "Cooking smoke drifts between the houses. The old hall feels slightly less forgotten."
+    : "The smell of cooking smoke drifts from nearby houses.";
 }
 
 function isResourceKnown(resourceId: (typeof resourceIds)[number]): boolean {

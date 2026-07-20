@@ -64,12 +64,19 @@
 - [x] Vary existing resident responses using existing knowledge and restoration state.
 - [x] Avoid time, schedules, relationships, quests, and new progression systems.
 
+## Interface Atmosphere Pass
+
+- [x] Remove player identity and decorative environmental HUD language.
+- [x] Limit the left column to carried materials and discovered places.
+- [x] Replace time and weather placeholders with contextual atmosphere.
+- [x] Move persistence actions behind a minimal settings entry.
+
 ## Persistence Foundation
 
 - [x] Save complete current GameState to versioned browser storage.
 - [x] Load automatically when Townly starts.
 - [x] Save automatically after meaningful state changes.
-- [x] Provide Save, Load, and Reset text actions.
+- [x] Provide Save, Load, and Begin again through a minimal Settings entry.
 - [x] Reject invalid or outdated saves without crashing.
 
 ## Spatial Identity

@@ -34,6 +34,8 @@ Notable project changes are recorded here.
 - Existing resident dialogue now recalls workshops, tool repair, fields, and hospitality as village history.
 - Daily Presence Foundation adding state-aware shelter reflection and Town Square observation.
 - Existing conversations now recognize familiarity and restoration without relationship or quest systems.
+- Interface Atmosphere Pass removing player-sheet and decorative environmental HUD language.
+- Persistence controls moved behind a minimal settings entry without changing save behavior.
 - Versioned localStorage persistence for current player, world, knowledge, people, and restoration state.
 - Automatic startup loading, state-change saving, and Save/Load/Reset text actions.
 - Invalid save validation with safe fresh-game fallback.

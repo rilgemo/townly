@@ -50,6 +50,9 @@ This document records gameplay rules that are implemented or approved for implem
 - Searching Mine rubble provides Stone without treating the Mine itself as a reward source.
 - Your Shelter is an empty living place with simple observation, rest, and leave actions.
 - Shelter has no storage, furniture, crafting, capacity, or level behavior.
+- The interface shows only materials currently carried and places actually discovered.
+- Environmental context uses place-based observations rather than decorative time or weather values.
+- Save, Load, and Begin again remain accessible through a minimal Settings entry.
 
 ## Design Principle
 

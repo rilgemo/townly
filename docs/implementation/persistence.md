@@ -43,11 +43,7 @@ The game loads automatically before Phaser starts.
 
 Current scenes save automatically when they render after meaningful state changes, including movement, observation, resident interaction, material findings, discoveries, and restoration.
 
-The interface also provides lightweight text actions:
-
-- Save Game
-- Load Game
-- Reset Game
+The interface provides a minimal Settings entry that reveals Save, Load, and Begin again actions. Persistence remains available without occupying the main gameplay screen.
 
 Reset asks for confirmation, removes the local save, restores a fresh initial `GameState`, and reloads the application so no active scene or timer survives. It exists for development testing and replaying Arrival; it is not presented as character deletion.
 
