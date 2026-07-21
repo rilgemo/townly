@@ -6,6 +6,8 @@ Notable project changes are recorded here.
 
 ### Added
 
+- Experience Review governance checklist for evaluating feature proposals before implementation.
+- PR template prompts covering experience, world change, restoration, and reuse of existing mechanics.
 - Townly Design Manifesto v0.1 as the reference for future product decisions.
 - Four-layer documentation guide and Experience First development rule.
 - Pull request template centered on player experience and world change.

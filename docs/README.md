@@ -34,6 +34,13 @@ Townly documentation is organized by how stable a decision should be and which q
 - It may be refactored whenever a simpler implementation serves the same experience.
 - Do not add architecture documentation before the architecture actually exists.
 
+## Governance — Review
+
+`governance/` contains lightweight questions used before implementation.
+
+- It protects the experience-first philosophy without defining code or architecture.
+- Use the [Experience Review](governance/experience-review.md) to test a feature proposal before expanding its scope.
+
 ## Experience First Rule
 
 Before implementation begins, every milestone or pull request must answer:

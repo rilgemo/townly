@@ -1,3 +1,12 @@
+## Experience Review
+
+- What experience does this create?
+- What changes in the world?
+- Does this restore or merely unlock?
+- Can this be achieved using existing mechanics?
+
+Use the [Experience Review](../docs/governance/experience-review.md) when the proposal needs a fuller design check.
+
 ## Player Experience
 
 What will the player feel, notice, or understand for the first time?
